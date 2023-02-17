@@ -280,3 +280,4 @@ def main(cardSInput):
         file_object.write(("total : " + str(duree + duree2)) + "\n")
 
 main(int(sys.argv[1]))
+#test
