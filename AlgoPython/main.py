@@ -38,19 +38,12 @@ kappa = [
 
 # Fonctions
 
-def creerAffectations(size, n):
-    res = []
+def creerAffectations(size):
     base = []
     for i in range(0, size):
         base.append(i)
-    for i in range(0, n):
-        random.shuffle(base)
-        res.append(base.copy())
-
-    #TO REMOVE
-    #res = [[10, 13, 19, 15, 5, 21, 1, 9, 3, 7, 17, 8, 6, 12, 4, 14, 20, 0, 16, 23, 18, 2, 11, 22]]
-    #res = [[12,7,3,5,17,19,1,15,21,6,18,8,9,13,10,11,20,2,14,23,4,16,22,0]]
-    return res
+    random.shuffle(base)
+    return base
 
 
 def resoudreSemaine(semaine, cardO, kappa):
@@ -138,70 +131,165 @@ def calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa):
 
 # Fonction majeure retournant une trame de base pour le planning durant cardS semaines.
 # Elle prend en compte les compétences de chaque opérateur
-def trameBase(cardO, cardS, kappa):
-    n = 1  # Nombre de permutations testées
-    affectations = creerAffectations(cardO, n)
+def construireSol(cardO, cardS, kappa, random, semaine1):
+    if random:
+        affectations = creerAffectations(cardO)
+    else:
+        affectations = semaine1.copy()
 
     # Pour chaque affectation, on crée semaine par semaine un emploi du temps
     # Si tout n'est pas compatible, on commence par permuter les compétences complémentaires
     # Si tout n'est pas résolu de cette manière, on fait des échanges
 
-    for iter in range(0, n): # Pas utilisé pour l'instant
-        trameInit = []
-        # en fonction de la première affection, on décale de 1 chaque semaine
-        for s in range(0, cardS):
-            affectSemaine = affectations[iter].copy()
-            for p in range(0, cardO):
-                affectSemaine[p] = (affectSemaine[p] + s) % cardO
-            trameInit.append(affectSemaine.copy())
+    trameInit = []
+    # en fonction de la première affection, on décale de 1 chaque semaine
+    for s in range(0, cardS):
+        affectSemaine = affectations.copy()
+        for p in range(0, cardO):
+            affectSemaine[p] = (affectSemaine[p] + s) % cardO
+        trameInit.append(affectSemaine.copy())
 
-        trameFinale = []
-        insatisfaction = zeros(cardO)
-        insatSemaine = []
-        # pour chaque semaine, on observe si une personne n'est pas à un poste où elle est compétente
-        for s in range(0, cardS):
-            semaineInit = trameInit[s].copy()
-            semaineFinale = resoudreSemaine(semaineInit.copy(), cardO, kappa)
-            #insatSemaine.append(res[1])
-            trameFinale.append(semaineFinale)
-            insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
-            for i in range(0, cardO):
-                # print(insatisfaction[i])
-                # print(res[1])
-                insatisfaction[i] += insatSemaine[i]
-
-        # for s in range(0,cardS):
-        #    print(trameInit[s])
-        #    print(trameFinale[s])
-        #    print()
-        #
-        # print("insatisfaction = ", insatisfaction)
-        insatisfactionTotale = 0
+    trameFinale = []
+    insatisfaction = zeros(cardO)
+    insatSemaine = []
+    # pour chaque semaine, on observe si une personne n'est pas à un poste où elle est compétente
+    for s in range(0, cardS):
+        semaineInit = trameInit[s].copy()
+        semaineFinale = resoudreSemaine(semaineInit.copy(), cardO, kappa)
+        # insatSemaine.append(res[1])
+        trameFinale.append(semaineFinale)
+        insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
         for i in range(0, cardO):
-            insatisfactionTotale += insatisfaction[i]
-        # print("insatisfactionTotale = ", insatisfactionTotale)
-        return [insatisfactionTotale, trameInit, trameFinale]
+            # print(insatisfaction[i])
+            # print(res[1])
+            insatisfaction[i] += insatSemaine[i]
 
+    insatisfactionTotale = 0
+    for i in range(0, cardO):
+        insatisfactionTotale += insatisfaction[i]
+    # print("insatisfactionTotale = ", insatisfactionTotale)
+    return [insatisfactionTotale, trameInit, trameFinale]
+
+def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa):
+
+    topSolutions = []
+    bestInsat = 9999
+    worstInsat = -1
+
+    for i in range(0, taillePop):
+        sol = construireSol(cardO, nbSemaines, kappa, True, None)
+        topSolutions.append(sol)
+        valueSol = sol[0]
+        if valueSol < bestInsat:
+            bestInsat = valueSol
+
+        if valueSol > worstInsat:
+            worstInsat = valueSol
+
+
+    for i in range(0,nbRun-taillePop):
+        sol = construireSol(cardO, nbSemaines, kappa, True, None)
+        valueSol = sol[0]
+        if valueSol < worstInsat :
+            found = False
+            i = 0
+            while not found and i < taillePop:
+                if topSolutions[i][0] > valueSol:
+                    found = True
+                    topSolutions[i] = sol.copy()
+                else:
+                    i = i + 1
+
+    return topSolutions
+
+def tabuSearch(solInit, cardO, cardS, kappa):
+    found = False
+    semaine1Init = solInit[2][0]
+    valueInit = solInit[0]
+    i = 0
+    while not found and i < (cardO - 1):
+        j = i + 1
+        while not found and j < cardO:
+            newSolSemaine1 = semaine1Init.copy()
+            temp = newSolSemaine1[i]
+            newSolSemaine1[i] = newSolSemaine1[j]
+            newSolSemaine1[j] = temp
+            newSol = construireSol(cardO, cardS, kappa, False, newSolSemaine1)
+            valueNewSol = newSol[0]
+            if valueNewSol < valueInit:
+                found = True
+            j = j + 1
+
+        i = i + 1
+    if found:
+        return [True, newSol]
+    else:
+        return  [False, None]
+
+def test():
+    taillePop = 100
+    nbRun = 20
+    pop = construirePopulationSolution(taillePop, nbRun, 24, 15, kappa)
+    pop.sort()
+
+    print("Avant")
+    for i in range(0,taillePop):
+        print(pop[i][0], " : ", pop[i][2][0])
+
+    stop = False
+    index = 0
+    while not stop and index < taillePop:
+        newSol = tabuSearch(pop[index], 24, 15, kappa)
+        #print("on cherche", index)
+        #si on trouve une meilleure solution, on remplace
+        if newSol[0]:
+            #print("Amélioration")
+            pop[index] = newSol[1].copy()
+            valueNewSol = newSol[1][0]
+            pop.sort()
+            foundNewIndex = False
+            newIndex = 0
+            while not foundNewIndex and newIndex < taillePop:
+                if valueNewSol <= pop[newIndex][0]:
+                    foundNewIndex = True
+                    index = newIndex
+                    print(newIndex)
+                else:
+                    newIndex = newIndex + 1
+        else:
+            index = index + 1
+
+    print("Après")
+    for i in range(0, taillePop):
+        print(pop[i][0], " : ", pop[i][2][0])
+
+    print("code")
+    for i in range(0, taillePop):
+        if pop[i][0] == 4:
+            for j in range(0, 24):
+                print
+
+test()
 
 # Appel de la fonction
 #res = trameBase(24, 16, kappa)
 
-totInsat = 0
-bestInsat = 10000
-nbTest = 10000
-bestRes = []
-nbSemaine = 18
-for i in range(0, nbTest):
-    res = trameBase(24, nbSemaine, kappa)
-    totInsat += res[0]
-    if res[0] < bestInsat:
-        bestInsat = res[0]
-        bestRes = res.copy()
-
-for i in range(0, nbSemaine):
-    print(bestRes[1][i])
-    print(bestRes[2][i])
-    print()
-
-print("moy = ", totInsat / nbTest)
-print("best = ", bestInsat)
+#totInsat = 0
+#bestInsat = 10000
+#nbTest = 10000
+#bestRes = []
+#nbSemaines = 15
+#for i in range(0, nbTest):
+#    res = construireSol(24, nbSemaines, kappa)
+#    totInsat += res[0]
+#    if res[0] < bestInsat:
+#        bestInsat = res[0]
+#        bestRes = res.copy()
+#
+#for i in range(0, nbSemaine):
+#    print(bestRes[1][i])
+#    print(bestRes[2][i])
+#    print()
+#
+#print("moy = ", totInsat / nbTest)
+#print("best = ", bestInsat)
