@@ -98,7 +98,7 @@ def resoudreSemaine(semaine, cardO, kappa):
             amelioration = False
             randomOpe = 0
             random.shuffle(listeOperateurs)
-            while randomOpe < cardO and not amelioration:  # attention, ici, c'est injuste pour les premiers de la liste
+            while randomOpe < cardO and not amelioration:
                 i = listeOperateurs[randomOpe]
                 if kappa[i][semaine[incomp[0]]] == 1 and kappa[incomp[0]][semaine[i]]:
                     # print("on inverse", incomp[0], "et", i)
@@ -168,7 +168,7 @@ def construireSol(cardO, cardS, kappa, random, semaine1):
     for i in range(0, cardO):
         insatisfactionTotale += insatisfaction[i]
     # print("insatisfactionTotale = ", insatisfactionTotale)
-    return [insatisfactionTotale, trameInit, trameFinale]
+    return [insatisfactionTotale, affectations, trameFinale]
 
 def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa):
 
@@ -204,7 +204,7 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa):
 
 def tabuSearch(solInit, cardO, cardS, kappa):
     found = False
-    semaine1Init = solInit[2][0]
+    semaine1Init = solInit[1]
     valueInit = solInit[0]
     i = 0
     while not found and i < (cardO - 1):
@@ -226,20 +226,18 @@ def tabuSearch(solInit, cardO, cardS, kappa):
     else:
         return  [False, None]
 
-def test():
-    taillePop = 100
-    nbRun = 20
-    pop = construirePopulationSolution(taillePop, nbRun, 24, 15, kappa)
+def test(taillePop, nbRunInit, cardO, cardS, kappa):
+    pop = construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa)
     pop.sort()
 
     print("Avant")
     for i in range(0,taillePop):
-        print(pop[i][0], " : ", pop[i][2][0])
+        print(pop[i][0], " : ", pop[i][1])
 
     stop = False
     index = 0
     while not stop and index < taillePop:
-        newSol = tabuSearch(pop[index], 24, 15, kappa)
+        newSol = tabuSearch(pop[index], cardO, cardS, kappa)
         #print("on cherche", index)
         #si on trouve une meilleure solution, on remplace
         if newSol[0]:
@@ -261,15 +259,31 @@ def test():
 
     print("Après")
     for i in range(0, taillePop):
-        print(pop[i][0], " : ", pop[i][2][0])
+        print(pop[i][0], " : ", pop[i][1])
 
-    print("code")
-    for i in range(0, taillePop):
-        if pop[i][0] == 4:
-            for j in range(0, 24):
-                print
+    print("verif")
 
-test()
+
+    #print("code")
+    #for index in range(0, taillePop):
+    #    if pop[index][0] == 4:
+    #        res = np.zeros((24,24))
+    #        for i in range(0,24):
+    #            res[i, pop[index][2][0][i]] = 1
+    #        print(res)
+
+
+test(20, 20, 24, 24, kappa)
+
+# Pour construire une solution et obtenir la matrice des Y_ir
+#sol = construireSol(24, 14, kappa, False, [12,7,3,5,17,19,1,15,21,6,18,8,9,13,10,11,20,2,14,23,4,16,22,0])
+#print("sol = ", sol[0])
+#res = np.zeros((24,24))
+#for i in range(0,24):
+#    res[i, sol[2][0][i]] = 1
+#print(res)
+#print(sol[2][0])
+#print(sol[1][0])
 
 # Appel de la fonction
 #res = trameBase(24, 16, kappa)
