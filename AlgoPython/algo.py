@@ -3,41 +3,8 @@
 
 import random
 import numpy as np
-from numpy import *
 
-# Données
-
-kappa = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
-
-
-# Fonctions
-
+# fonction secondaire permettant de créer une affectation aléatoire (vecteur Y_ir)
 def creerAffectations(size):
     base = []
     for i in range(0, size):
@@ -46,8 +13,9 @@ def creerAffectations(size):
     return base
 
 
-def resoudreSemaine(semaine, cardO, kappa):
+def resoudreSemaine(semaine, cardO, kappa, sigma):
     #insat = zeros(cardO)
+    succes = True
     listeOperateurs = []  # utile pour l'équité dans le remplacement
     for i in range(0, cardO):
         listeOperateurs.append(i)
@@ -59,9 +27,9 @@ def resoudreSemaine(semaine, cardO, kappa):
             incomp.append(i)
     if len(incomp) == 0:
         stop = True
-        # print("Semaine sans erreur")
+        #print("Semaine sans erreur")
         #return [semaine, insat]
-        return semaine
+        return semaine, succes
     else:
         stop = False
 
@@ -76,7 +44,9 @@ def resoudreSemaine(semaine, cardO, kappa):
                 while j < len(incomp) and not amelioration:
                     # print("i = ", i, ", j = ", j)
                     # print(incomp)
-                    if kappa[incomp[i]][semaine[incomp[j]]] == 1 and kappa[incomp[j]][semaine[incomp[i]]] == 1:
+                    posteI = semaine[incomp[i]]
+                    posteJ = semaine[incomp[j]]
+                    if kappa[incomp[i]][posteJ] == 1 and kappa[incomp[j]][posteI] == 1 and sigma[posteI][posteJ] == 1:
                         # print("on inverse", incomp[i], "et", incomp[j])
                         amelioration = True
                         temp = semaine[incomp[i]]
@@ -100,7 +70,7 @@ def resoudreSemaine(semaine, cardO, kappa):
             random.shuffle(listeOperateurs)
             while randomOpe < cardO and not amelioration:
                 i = listeOperateurs[randomOpe]
-                if kappa[i][semaine[incomp[0]]] == 1 and kappa[incomp[0]][semaine[i]]:
+                if kappa[i][semaine[incomp[0]]] == 1 and kappa[incomp[0]][semaine[i]] and sigma[semaine[incomp[0]]][semaine[i]]:
                     # print("on inverse", incomp[0], "et", i)
                     amelioration = True
                     temp = semaine[i]
@@ -111,12 +81,17 @@ def resoudreSemaine(semaine, cardO, kappa):
                     #insat[i] = insat[i] + 1
                 randomOpe += 1
 
-        if len(incomp) == 0:
+        if len(incomp) == 0 or not amelioration:
             # print("== 0")
             stop = True
 
     #return [semaine, insat]
-    return semaine
+    if amelioration:
+        #print("cool")
+        return semaine, succes
+    else:
+        #print("infaisable")
+        return semaine, not succes
 
 
 def calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa):
@@ -131,7 +106,7 @@ def calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa):
 
 # Fonction majeure retournant une trame de base pour le planning durant cardS semaines.
 # Elle prend en compte les compétences de chaque opérateur
-def construireSol(cardO, cardS, kappa, random, semaine1):
+def construireSol(cardO, cardS, kappa, sigma, random, semaine1):
     if random:
         affectations = creerAffectations(cardO)
     else:
@@ -150,12 +125,14 @@ def construireSol(cardO, cardS, kappa, random, semaine1):
         trameInit.append(affectSemaine.copy())
 
     trameFinale = []
-    insatisfaction = zeros(cardO)
+    insatisfaction = np.zeros(cardO)
     insatSemaine = []
     # pour chaque semaine, on observe si une personne n'est pas à un poste où elle est compétente
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
-        semaineFinale = resoudreSemaine(semaineInit.copy(), cardO, kappa)
+        semaineFinale, faisable = resoudreSemaine(semaineInit.copy(), cardO, kappa, sigma)
+        if not faisable:
+            return [None, None, None, False]
         # insatSemaine.append(res[1])
         trameFinale.append(semaineFinale)
         insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
@@ -168,29 +145,33 @@ def construireSol(cardO, cardS, kappa, random, semaine1):
     for i in range(0, cardO):
         insatisfactionTotale += insatisfaction[i]
     # print("insatisfactionTotale = ", insatisfactionTotale)
-    return [insatisfactionTotale, affectations, trameFinale]
+    return [insatisfactionTotale, affectations, trameFinale, True]
 
-def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa):
+def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sigma):
 
     topSolutions = []
     bestInsat = 9999
     worstInsat = -1
 
-    for i in range(0, taillePop):
-        sol = construireSol(cardO, nbSemaines, kappa, True, None)
-        topSolutions.append(sol)
-        valueSol = sol[0]
-        if valueSol < bestInsat:
-            bestInsat = valueSol
+    i = 0
+    while i < taillePop:
+        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
+        if sol[3]:
+            topSolutions.append(sol)
+            valueSol = sol[0]
+            if valueSol < bestInsat:
+                bestInsat = valueSol
 
-        if valueSol > worstInsat:
-            worstInsat = valueSol
+            if valueSol > worstInsat:
+                worstInsat = valueSol
+            i = i+1
+
 
 
     for i in range(0,nbRun-taillePop):
-        sol = construireSol(cardO, nbSemaines, kappa, True, None)
+        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
         valueSol = sol[0]
-        if valueSol < worstInsat :
+        if valueSol < worstInsat and sol[3]: #si la nouvelle solution est meilleure et faisable
             found = False
             i = 0
             while not found and i < taillePop:
@@ -202,7 +183,7 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa):
 
     return topSolutions
 
-def tabuSearch(solInit, cardO, cardS, kappa):
+def tabuSearch(solInit, cardO, cardS, kappa, sigma):
     found = False
     semaine1Init = solInit[1]
     valueInit = solInit[0]
@@ -214,10 +195,11 @@ def tabuSearch(solInit, cardO, cardS, kappa):
             temp = newSolSemaine1[i]
             newSolSemaine1[i] = newSolSemaine1[j]
             newSolSemaine1[j] = temp
-            newSol = construireSol(cardO, cardS, kappa, False, newSolSemaine1)
+            newSol = construireSol(cardO, cardS, kappa, sigma, False, newSolSemaine1)
             valueNewSol = newSol[0]
-            if valueNewSol < valueInit:
-                found = True
+            if newSol[3]:
+                if valueNewSol < valueInit:  # si la solution générée est meilleure et faisable
+                    found = True
             j = j + 1
 
         i = i + 1
@@ -226,8 +208,8 @@ def tabuSearch(solInit, cardO, cardS, kappa):
     else:
         return  [False, None]
 
-def test(taillePop, nbRunInit, cardO, cardS, kappa):
-    pop = construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa)
+def rechercheLocale2opt(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
+    pop = construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
     pop.sort()
 
     print("Avant")
@@ -237,10 +219,10 @@ def test(taillePop, nbRunInit, cardO, cardS, kappa):
     stop = False
     index = 0
     while not stop and index < taillePop:
-        newSol = tabuSearch(pop[index], cardO, cardS, kappa)
+        newSol = tabuSearch(pop[index], cardO, cardS, kappa, sigma)
         #print("on cherche", index)
         #si on trouve une meilleure solution, on remplace
-        if newSol[0]:
+        if newSol[0] and newSol[1][3]:
             #print("Amélioration")
             pop[index] = newSol[1].copy()
             valueNewSol = newSol[1][0]
@@ -263,17 +245,83 @@ def test(taillePop, nbRunInit, cardO, cardS, kappa):
 
     print("verif")
 
+def main():
+    # Données du problème
 
-    #print("code")
-    #for index in range(0, taillePop):
-    #    if pop[index][0] == 4:
-    #        res = np.zeros((24,24))
-    #        for i in range(0,24):
-    #            res[i, pop[index][2][0][i]] = 1
-    #        print(res)
+    # kappa est une matrice de taille [nombre d'opérateurs x nombre de postes]
+    # kappa[i, p] vaut 1 si l'opérateur i peut effectuer le poste p
+    kappa = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+    # sigme est une matrice de taille [nombre de postes x nombre de postes]
+    # sigma[p, p'] vaut 1 si les postes p et p' sont permutables (donc sur le même créneau horaire)
+    sigma = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+             [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
+
+    rechercheLocale2opt(20, 20, 24, 24, kappa, sigma)
+
+main()
 
 
-test(20, 20, 24, 24, kappa)
+
+#taille = 5000
+#cpt = 0.0
+#meanVal = 0.0
+#res = []
+#for i in range(0,taille):
+#    sol = construireSol(24, 24, kappa, sigma, True, None)
+#    if sol[3]:
+#        cpt += 1
+#        meanVal += sol[0]
+#        res.append((sol.copy()))
+#print(cpt/taille*100)
+#print(meanVal/cpt)
+#print(res[0][1])
 
 # Pour construire une solution et obtenir la matrice des Y_ir
 #sol = construireSol(24, 14, kappa, False, [12,7,3,5,17,19,1,15,21,6,18,8,9,13,10,11,20,2,14,23,4,16,22,0])
