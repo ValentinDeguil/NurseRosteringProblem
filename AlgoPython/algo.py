@@ -4,7 +4,7 @@
 import random
 import numpy as np
 
-# fonction secondaire permettant de créer une affectation aléatoire (vecteur Y_ir)
+# Fonction secondaire permettant de créer une affectation aléatoire (vecteur Y_ir)
 def creerAffectations(size):
     base = []
     for i in range(0, size):
@@ -13,41 +13,36 @@ def creerAffectations(size):
     return base
 
 
+# Fonction vérifiant si pour une semaine donnée, chaque opérateur peut effectuer le poste qui lui a été attribué
+# Dans le cas contraire, on procède à des échanges de postes entre les opérateurs
 def resoudreSemaine(semaine, cardO, kappa, sigma):
-    #insat = zeros(cardO)
-    succes = True
-    listeOperateurs = []  # utile pour l'équité dans le remplacement
+    succes = True # permet d'obtenir le statut de la réparation de la semaine
+    listeOperateurs = []  # sera utilisé plus tard pour l'équité dans le remplacement
     for i in range(0, cardO):
         listeOperateurs.append(i)
 
-    incomp = []
+    incomp = [] # vecteur contenant les opérateurs i non compétents pour leurs postes actuels
     for i in range(0, cardO):
-        # l'opérateur i n'est pas compétent pour le poste p
         if kappa[i][semaine[i]] == 0:
             incomp.append(i)
     if len(incomp) == 0:
-        stop = True
-        #print("Semaine sans erreur")
-        #return [semaine, insat]
         return semaine, succes
-    else:
-        stop = False
 
-    while not stop:
-        amelioration = False
-        # ici, on vérifie si on peut faire l'échange intelligent
-        if len(incomp) >= 2:
-            # print(">=2")
-            i = 0
+    stop = False
+    amelioration = False
+
+    while not stop: # on poursuit les permutations s'il reste des gens mal affectés et que la solution reste faisable
+        amelioration = False # permet de savoir si un échange intelligent a été trouvé
+        if len(incomp) >= 2: # on vérifie si on peut faire un échange intelligent
+            i = 0 # ici, i et j représentent les deux opérateurs incompétents que l'on souhaite échanger
             while i < len(incomp) and not amelioration:
                 j = i
                 while j < len(incomp) and not amelioration:
-                    # print("i = ", i, ", j = ", j)
-                    # print(incomp)
                     posteI = semaine[incomp[i]]
                     posteJ = semaine[incomp[j]]
+                    # si i et j possèdent chacun la compétence de l'autre que ces postes sont sur le même créneau
+                    # horaire, alors on les permute
                     if kappa[incomp[i]][posteJ] == 1 and kappa[incomp[j]][posteI] == 1 and sigma[posteI][posteJ] == 1:
-                        # print("on inverse", incomp[i], "et", incomp[j])
                         amelioration = True
                         temp = semaine[incomp[i]]
                         semaine[incomp[i]] = semaine[incomp[j]]
@@ -59,103 +54,105 @@ def resoudreSemaine(semaine, cardO, kappa, sigma):
                     else:
                         j += 1
                 i += 1
-        # maintenant, si incomp ne contient qu'un seul opérateur, on permute avec quelqu'un de plus compétent
+        # À présent, s'il ne reste plus qu'un seul opérateur incompétent ou s'il en reste plus et
+        # qu'aucun échange intelligent n'est possible, on permute un incompétent et un double compétent
         if len(incomp) == 1 or (len(incomp) >= 2 and not amelioration):
-            # if len(incomp) == 1:
-            #    print("cas 1 : == 1")
-            # else:
-            #    print("cas 2 : >= 2")
             amelioration = False
             randomOpe = 0
-            random.shuffle(listeOperateurs)
+            random.shuffle(listeOperateurs) # on mélange la liste des opérateurs pour ne pas toujours sélectionner le même
             while randomOpe < cardO and not amelioration:
                 i = listeOperateurs[randomOpe]
+                # si l'opérateur choisi aléatoirement possède la compétente manquante à l'incompétent, que l'incompétent
+                # possède la compétence pour son poste et que les deux postes sont permutables, alors on échange leurs postes
                 if kappa[i][semaine[incomp[0]]] == 1 and kappa[incomp[0]][semaine[i]] and sigma[semaine[incomp[0]]][semaine[i]]:
-                    # print("on inverse", incomp[0], "et", i)
                     amelioration = True
                     temp = semaine[i]
                     semaine[i] = semaine[incomp[0]]
                     semaine[incomp[0]] = temp
                     operateur1 = incomp[0]
                     incomp.remove(operateur1)
-                    #insat[i] = insat[i] + 1
                 randomOpe += 1
 
+        # S'il ne reste plus d'opérateur incompétent ou si on ne peut pas réaliser
+        # de permutation améliorante, alors on sort de la boucle
         if len(incomp) == 0 or not amelioration:
-            # print("== 0")
             stop = True
 
-    #return [semaine, insat]
+    # si lors du dernier essai de permutation, nous n'avons pas trouvé de permutation,
+    # alors on considère que l'affectation Y_ir des opérateurs au roulement ne peut pas donner de solution valide
     if amelioration:
-        #print("cool")
         return semaine, succes
     else:
-        #print("infaisable")
         return semaine, not succes
 
 
+# Fonction secondaire permettant de calculer l'insatisfaction de chaque opérateur à la partir de la
+# semaine initiale prévue et de sa version réparée (lorsque des opérateurs étaient incompétents)
 def calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa):
     scores = np.zeros(cardO)
     for i in range(0,cardO):
         postePrevu = semaineInit[i]
         posteFinal = semaineFinale[i]
+        # un opérateur est insatisfait si son poste final est différent de son poste final
+        # alors qu'il était compétent pour le premier
         if kappa[i][postePrevu] == 1 and postePrevu != posteFinal:
             scores[i] = scores[i] + 1
     return scores
 
 
-# Fonction majeure retournant une trame de base pour le planning durant cardS semaines.
+# Fonction principale retournant une trame de base pour le planning durant cardS semaines.
 # Elle prend en compte les compétences de chaque opérateur
-def construireSol(cardO, cardS, kappa, sigma, random, semaine1):
-    if random:
+def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
+    # isRandom est utile pour la recherche locale, on peut ainsi choisir un vecteur Y_ir aléatoire ou non
+    if isRandom:
         affectations = creerAffectations(cardO)
     else:
-        affectations = semaine1.copy()
+        affectations = affectationsRoulement.copy()
 
-    # Pour chaque affectation, on crée semaine par semaine un emploi du temps
-    # Si tout n'est pas compatible, on commence par permuter les compétences complémentaires
-    # Si tout n'est pas résolu de cette manière, on fait des échanges
-
-    trameInit = []
-    # en fonction de la première affection, on décale de 1 chaque semaine
+    trameInit = [] # on crée la trame initiale pour toutes les semaines en fonction du vecteur Y_ir (affectations)
     for s in range(0, cardS):
         affectSemaine = affectations.copy()
         for p in range(0, cardO):
-            affectSemaine[p] = (affectSemaine[p] + s) % cardO
+            affectSemaine[p] = (affectSemaine[p] + s) % cardO # décale de 1 chaque semaine le poste effectué par un opérateur
         trameInit.append(affectSemaine.copy())
 
+    # À partir de la trame de base, on répare les semaines où des opérateurs sont affectés à des postes où ils sont incompétents
     trameFinale = []
     insatisfaction = np.zeros(cardO)
-    insatSemaine = []
-    # pour chaque semaine, on observe si une personne n'est pas à un poste où elle est compétente
+    # Pour chaque semaine, on observe si une personne est à un poste où elle n'est pas compétente
+    # Si pour une semaine donnée, aucune affectation n'est possible, on retourne une solution vide
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
         semaineFinale, faisable = resoudreSemaine(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
             return [None, None, None, False]
-        # insatSemaine.append(res[1])
         trameFinale.append(semaineFinale)
         insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
         for i in range(0, cardO):
-            # print(insatisfaction[i])
-            # print(res[1])
             insatisfaction[i] += insatSemaine[i]
 
+    # On fait la somme de l'insatisfaction de chaque opérateur
     insatisfactionTotale = 0
     for i in range(0, cardO):
         insatisfactionTotale += insatisfaction[i]
-    # print("insatisfactionTotale = ", insatisfactionTotale)
+
+    # La solution retournée est au format [valeur fonction objectif, Y_ir, z_isp, estFaisable]
     return [insatisfactionTotale, affectations, trameFinale, True]
 
+# Fonction principale permettant de construire une population de solutions, ne conservant que les meilleures
 def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sigma):
 
+    # Variables permettant de conserver les solutions actuellement dans la population
+    # ainsi que les valeurs de la meilleure et de la pire
     topSolutions = []
     bestInsat = 9999
     worstInsat = -1
 
-    i = 0
+    i = 0 # on continue de générer des solutions jusqu'à en avoir le nombre minimum requis
     while i < taillePop:
         sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
+        # si la solution générée est faisable (par rapport aux compétences des opérateurs),
+        # on met à jour les différentes informations
         if sol[3]:
             topSolutions.append(sol)
             valueSol = sol[0]
@@ -166,24 +163,44 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
                 worstInsat = valueSol
             i = i+1
 
-
+    topSolutions.sort()
 
     for i in range(0,nbRun-taillePop):
         sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
         valueSol = sol[0]
-        if valueSol < worstInsat and sol[3]: #si la nouvelle solution est meilleure et faisable
-            found = False
-            i = 0
-            while not found and i < taillePop:
-                if topSolutions[i][0] > valueSol:
-                    found = True
-                    topSolutions[i] = sol.copy()
-                else:
-                    i = i + 1
-
+        if sol[3]: # si la nouvelle solution est faisable...
+            if valueSol < worstInsat: # et meilleure que la pire solution de la solution...
+                # alors, on met à jour notre population.
+                # Deux cas sont possibles, cas 1 : la solution générée est la nouvelle meilleure
+                if bestInsat >= valueSol:
+                    bestInsat = valueSol
+                    newTopSolutions = [sol.copy()]
+                    for k in range(0, taillePop - 1):
+                        newTopSolutions.append(topSolutions[k].copy())
+                    topSolutions = newTopSolutions.copy()
+                else :
+                    # cas 2 : la solution générée se situe quelque part au milieu de la population
+                    found = False
+                    j = taillePop - 1
+                    # on effectue la recherche de l'index où insérer la nouvelle solution par la fin
+                    # il est en effet très rare de générer des solutions très bonnes
+                    while not found and j >= 0:
+                        if topSolutions[j][0] <= valueSol:
+                            found = True
+                            newTopSolutions = []
+                            for k in range(0,j+1):
+                                newTopSolutions.append(topSolutions[k].copy())
+                            newTopSolutions.append(sol.copy())
+                            for k in range(j+1,taillePop-1):
+                                newTopSolutions.append(topSolutions[k].copy())
+                            topSolutions = newTopSolutions.copy()
+                            worstInsat = topSolutions[taillePop-1][0]
+                        else:
+                            j += -1
     return topSolutions
 
-def tabuSearch(solInit, cardO, cardS, kappa, sigma):
+# Fonction principale appliquant un algorithme de recherche locale 2-opt sur une population de solutions
+def rechercheLocale2optSolution(solInit, cardO, cardS, kappa, sigma):
     found = False
     semaine1Init = solInit[1]
     valueInit = solInit[0]
@@ -208,7 +225,7 @@ def tabuSearch(solInit, cardO, cardS, kappa, sigma):
     else:
         return  [False, None]
 
-def rechercheLocale2opt(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
+def rechercheLocale2optPopulation(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
     pop = construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
     pop.sort()
 
@@ -219,7 +236,7 @@ def rechercheLocale2opt(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
     stop = False
     index = 0
     while not stop and index < taillePop:
-        newSol = tabuSearch(pop[index], cardO, cardS, kappa, sigma)
+        newSol = rechercheLocale2optSolution(pop[index], cardO, cardS, kappa, sigma)
         #print("on cherche", index)
         #si on trouve une meilleure solution, on remplace
         if newSol[0] and newSol[1][3]:
@@ -242,8 +259,6 @@ def rechercheLocale2opt(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
     print("Après")
     for i in range(0, taillePop):
         print(pop[i][0], " : ", pop[i][1])
-
-    print("verif")
 
 def main():
     # Données du problème
@@ -303,7 +318,11 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    rechercheLocale2opt(20, 20, 24, 24, kappa, sigma)
+    rechercheLocale2optPopulation(20, 20, 24, 10, kappa, sigma)
+    #taillePop = 20
+    #pop = construirePopulationSolution(taillePop, 2000, 24, 10, kappa, sigma)
+    #for i in range(0, taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
 
 main()
 
