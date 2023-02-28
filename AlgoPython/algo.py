@@ -314,17 +314,23 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    listeTaillePop = [10,20,50,100]
-    listeNbRun = [100,500,2500,5000]
+    #listeTaillePop = [10,20,50,100]
+    listeTaillePop = [10]
+    #listeNbRun = [100,500,2500,5000]
+    listeNbRun = [1000]
+    nbTest = 2
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
+            best = 0
             start = time.time()
-            pop = rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+            for k in range(nbTest):
+                pop = rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+                best += pop[0][0]
             end = time.time()
-            bestVal = pop[0][0]
+            bestVal = best/nbTest
             print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
-            print("bestVal = ", bestVal, "         ")
-            print("Temps d'exécution : ", end - start)
+            print("bestVal moyen = ", bestVal, "         ")
+            print("Temps d'exécution moyen : ", (end - start)/nbTest)
             print()
 
 
