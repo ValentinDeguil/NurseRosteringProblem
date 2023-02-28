@@ -3,6 +3,7 @@
 
 import random
 import numpy as np
+import time
 
 # Fonction secondaire permettant de créer une affectation aléatoire (vecteur Y_ir)
 def creerAffectations(size):
@@ -199,66 +200,61 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
                             j += -1
     return topSolutions
 
-# Fonction principale appliquant un algorithme de recherche locale 2-opt sur une population de solutions
+# Fonction principale appliquant un algorithme de recherche locale 2-opt pour solution initiale
 def rechercheLocale2optSolution(solInit, cardO, cardS, kappa, sigma):
-    found = False
-    semaine1Init = solInit[1]
+    found = False # la fonction s'arrête dès qu'un meilleur voisin est trouvé
+    affectationsInit = solInit[1]
     valueInit = solInit[0]
+    # on inverse chaque paire d'opérateur (i,j) dans le roulement initial
     i = 0
     while not found and i < (cardO - 1):
         j = i + 1
         while not found and j < cardO:
-            newSolSemaine1 = semaine1Init.copy()
-            temp = newSolSemaine1[i]
-            newSolSemaine1[i] = newSolSemaine1[j]
-            newSolSemaine1[j] = temp
-            newSol = construireSol(cardO, cardS, kappa, sigma, False, newSolSemaine1)
+            newAffectations = affectationsInit.copy()
+            temp = newAffectations[i]
+            newAffectations[i] = newAffectations[j]
+            newAffectations[j] = temp
+            newSol = construireSol(cardO, cardS, kappa, sigma, False, newAffectations)
             valueNewSol = newSol[0]
-            if newSol[3]:
-                if valueNewSol < valueInit:  # si la solution générée est meilleure et faisable
-                    found = True
+            if newSol[3]: # si la solution générée est faisable...
+                if valueNewSol < valueInit:  # et meilleure que la solution initiale
+                    found = True # on a trouvé un meilleur voisin et la fonction s'interrompt
             j = j + 1
-
         i = i + 1
+    # on indique dans le retour si une meilleure solution a été trouvée ou non
     if found:
         return [True, newSol]
     else:
         return  [False, None]
 
+# Fonction principale appliquant un algorithme de recherche locale 2-opt sur une population de solutions
 def rechercheLocale2optPopulation(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
+    # on construit la population de solutions initiale
     pop = construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
     pop.sort()
 
-    print("Avant")
-    for i in range(0,taillePop):
-        print(pop[i][0], " : ", pop[i][1])
+    #print("Avant")
+    #for i in range(0,taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
 
     stop = False
     index = 0
     while not stop and index < taillePop:
         newSol = rechercheLocale2optSolution(pop[index], cardO, cardS, kappa, sigma)
-        #print("on cherche", index)
-        #si on trouve une meilleure solution, on remplace
-        if newSol[0] and newSol[1][3]:
-            #print("Amélioration")
+        # si la recherche locale sur la solution donne une meilleure valeur, alors celle-ci est remplacée
+        if newSol[0]:
+            # l'index ne change pas et on applique à nouveau la recherche locale sur cette nouvelle solution
             pop[index] = newSol[1].copy()
-            valueNewSol = newSol[1][0]
-            pop.sort()
-            foundNewIndex = False
-            newIndex = 0
-            while not foundNewIndex and newIndex < taillePop:
-                if valueNewSol <= pop[newIndex][0]:
-                    foundNewIndex = True
-                    index = newIndex
-                    print(newIndex)
-                else:
-                    newIndex = newIndex + 1
         else:
             index = index + 1
+            print("Chargement : ", float(index)/float(taillePop)*100, "%                  ", end='\r')
 
-    print("Après")
-    for i in range(0, taillePop):
-        print(pop[i][0], " : ", pop[i][1])
+    pop.sort()
+    #print("Après")
+    #for i in range(0, taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
+    #print()
+    return pop
 
 def main():
     # Données du problème
@@ -318,7 +314,20 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    rechercheLocale2optPopulation(20, 20, 24, 10, kappa, sigma)
+    listeTaillePop = [10,20,50,100]
+    listeNbRun = [100,500,2500,5000]
+    for i in range(len(listeTaillePop)):
+        for j in range(len(listeNbRun)):
+            start = time.time()
+            pop = rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+            end = time.time()
+            bestVal = pop[0][0]
+            print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
+            print("bestVal = ", bestVal, "         ")
+            print("Temps d'exécution : ", end - start)
+            print()
+
+
     #taillePop = 20
     #pop = construirePopulationSolution(taillePop, 2000, 24, 10, kappa, sigma)
     #for i in range(0, taillePop):
