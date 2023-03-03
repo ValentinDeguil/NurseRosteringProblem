@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from scipy.optimize import linear_sum_assignment
 def creerAffectations(size):
     base = []
     for i in range(0, size):
@@ -25,6 +26,35 @@ def permutation(listeIncomp):
             res.append([incomp] + p)
 
     return res
+
+
+def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
+    matrice = []
+    for i in range(cardO):
+        ligneI = []
+        posteI = semaine[i]
+        for p in range(cardO):
+            if kappa[i][p] == 0 or sigma[posteI][p] == 0:
+                ligneI.append(10000)
+            elif p == posteI:
+                ligneI.append(0)
+            else:
+                ligneI.append(1)
+        matrice.append(ligneI)
+
+    #print(matrice)
+    cost = np.array(matrice)
+    row_ind, col_ind = linear_sum_assignment(cost)
+    insat = cost[row_ind, col_ind].sum()
+    #print("insat = ", insat)
+    if insat < 10000:
+        newSemaine = []
+        for i in range(cardO):
+            newSemaine.append(col_ind[i])
+        #print("new affect ?", newSemaine)
+        return newSemaine, True
+    else:
+        return semaine, False
 
 # Fonction vérifiant si pour une semaine donnée, chaque opérateur peut effectuer le poste qui lui a été attribué
 # Dans le cas contraire, on procède à des échanges de postes entre les opérateurs
@@ -212,7 +242,7 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
         #print("semaine", s)
-        semaineFinale, faisable = resoudreSemaine(semaineInit.copy(), cardO, kappa, sigma)
+        semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
             return [None, None, None, False]
         trameFinale.append(semaineFinale)

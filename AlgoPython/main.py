@@ -85,26 +85,29 @@ def main():
     #for i in range(0, 10):
     #    print(pop[i][0], " : ", pop[i][1])
 
-    #start = time.time()
-    #methodeGRASP.methode2optGRASP(100, 100, 24, 24, kappa, sigma)
-    #end = time.time()
-    #print("Temps d'exécution : ", end - start)
-
-    #verif optimilité resoudreSemaine
-    cumul = 0
-    nbTest = 100
     start = time.time()
-    for i in range(nbTest):
-        sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [1, 19, 10, 18, 22, 6, 12, 9, 13, 23, 0, 4, 2, 21, 3, 20, 17, 16, 14, 11, 7, 5, 8, 15])
-        #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [16, 0, 8, 22, 20, 9, 14, 7, 19, 18, 4, 11, 17, 2, 5, 6, 10, 12, 23, 15, 21, 1, 3, 13])
-        #print("sol = ",sol[0]," : ", sol[1])
-        cumul += sol[0]
-        print(sol[0])
+    methodeGRASP.methode2optGRASP(5, 100, 24, 15, kappa, sigma)
     end = time.time()
-    #for i in range(24):
-        #print("semaine",i,"=",sol[2][i])
-    print(cumul/nbTest)
     print("Temps d'exécution : ", end - start)
+
+    #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, True, None)
+    #print("sol = ", sol[0], " : ", sol[1])
+
+    ##verif optimilité resoudreSemaine
+    #cumul = 0
+    #nbTest = 10000
+    #start = time.time()
+    #for i in range(nbTest):
+    #    sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [1, 19, 10, 18, 22, 6, 12, 9, 13, 23, 0, 4, 2, 21, 3, 20, 17, 16, 14, 11, 7, 5, 8, 15])
+    #    #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [16, 0, 8, 22, 20, 9, 14, 7, 19, 18, 4, 11, 17, 2, 5, 6, 10, 12, 23, 15, 21, 1, 3, 13])
+    #    #print("sol = ",sol[0]," : ", sol[1])
+    #    cumul += sol[0]
+    #    #print(sol[0])
+    #end = time.time()
+    ##for i in range(24):
+    #    #print("semaine",i,"=",sol[2][i])
+    #print(cumul/nbTest)
+    #print("Temps d'exécution : ", end - start)
 
     #pop = coreFunctions.construirePopulationSolution(taillePop, 2000, 24, 10, kappa, sigma)
     #for i in range(0, taillePop):
