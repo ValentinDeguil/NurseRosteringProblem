@@ -166,6 +166,14 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
 
     topSolutions.sort()
 
+    # On pourrait mettre ça à la place de la suite, sans doute plus optimisé pour de petits nombres de "nbRun"
+    #for i in range(0, nbRun - taillePop):
+    #    sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
+    #    if sol[3]:
+    #        topSolutions.append(sol.copy())
+    #topSolutions.sort()
+    #return topSolutions[:taillePop]
+
     for i in range(0,nbRun-taillePop):
         sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
         valueSol = sol[0]
@@ -256,6 +264,109 @@ def rechercheLocale2optPopulation(taillePop, nbRunInit, cardO, cardS, kappa, sig
     #print()
     return pop
 
+def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma):
+    randomPosition = []
+    operateursRestants = []
+    sol = []
+    for i in range(cardO):
+        randomPosition.append(i)
+        operateursRestants.append(i)
+        sol.append(-1)
+    random.shuffle(randomPosition)
+    #sol = np.ones(cardO, dtype=int)*(-1)
+    cumulRestant = np.ones(cardO)*taillePop
+
+    for i in range(cardO):
+        position = randomPosition[i]
+        #print("position = ", position)
+        #print("coucou = ", cumulRestant[position])
+        #print("randOperateur = ", randOperateur)
+        if cumulRestant[position] == 0:
+            indexOperateur = operateursRestants[random.randint(0, len(operateursRestants)-1)]
+        else:
+            randOperateur = random.randint(1, cumulRestant[position])
+            cumul = 0
+            j = 0
+            indexOperateur = -1
+            while j < cardO and cumul < cumulRestant[position]:
+                cumul += comptage[position][j]
+                #print("j = ",j," ; cumul = ",cumul)
+                if cumul >= randOperateur:
+                    indexOperateur = j
+                    cumul += taillePop #condition d'arrêt
+                j += 1
+        #print("indexOperateur = ", indexOperateur)
+        #print("avant retire")
+        #print("cumulRestant = ", cumulRestant)
+        #print("comptage = ", comptage)
+        for j in range(cardO):
+            cumulRetire = comptage[j][indexOperateur]
+            #print("on doit retirer ", cumulRetire)
+            cumulRestant[j] = cumulRestant[j] - cumulRetire
+            comptage[j][indexOperateur] = 0
+        sol[position] = indexOperateur
+        operateursRestants.remove(indexOperateur)
+        #print("après retire")
+        #print("cumulRestant = ", cumulRestant)
+        #print("comptage = ", comptage)
+        #print("sol = ", sol)
+    #print(comptage)
+    return construireSol(cardO,cardS,kappa,sigma,False,sol.copy())
+
+def constructionGRASP(taillePopInit, taillePopFinale, nbRunInit, cardO, cardS, kappa, sigma):
+    pop = construirePopulationSolution(taillePopInit, nbRunInit, cardO, cardS, kappa, sigma)
+    pop.sort()
+
+    comptage = np.zeros((cardO,cardO))
+    for index in range(taillePopInit):
+        sol = pop[index]
+        affectation = sol[1]
+        for i in range(cardO): #la position i, on augmente de 1 à la position de l'opérateur assigné
+            comptage[i][affectation[i]] += 1
+    #print(comptage)
+
+    #for i in range(0,taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
+    print("meilleur = ", pop[0][0])
+    print("pire = ", pop[taillePopInit-1][0])
+
+    cpt = 0
+    popFinale = []
+    while cpt < taillePopFinale:
+        newSol = genere1solutionGRASP(comptage.copy(), taillePopInit, cardO, cardS, kappa, sigma).copy()
+        if newSol[3]:
+            cpt += 1
+            popFinale.append(newSol.copy())
+    return popFinale
+
+def rechercheLocale2optPopulationGRASP(taillePopInit, taillePopFinale, nbRunInit, cardO, cardS, kappa, sigma):
+    # on construit la population de solutions initiale
+    pop = constructionGRASP(taillePopInit, taillePopFinale, nbRunInit, cardO, cardS, kappa, sigma)
+    pop.sort()
+
+    #print("Avant")
+    #for i in range(0,taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
+
+    stop = False
+    index = 0
+    while not stop and index < taillePopFinale:
+        newSol = rechercheLocale2optSolution(pop[index], cardO, cardS, kappa, sigma)
+        # si la recherche locale sur la solution donne une meilleure valeur, alors celle-ci est remplacée
+        if newSol[0]:
+            # l'index ne change pas et on applique à nouveau la recherche locale sur cette nouvelle solution
+            pop[index] = newSol[1].copy()
+        else:
+            index = index + 1
+            print("Chargement : ", float(index)/float(taillePopFinale)*100, "%                  ", end='\r')
+
+    pop.sort()
+    #print("Après")
+    #for i in range(0, taillePop):
+    #    print(pop[i][0], " : ", pop[i][1])
+    #print()
+    return pop
+
 def main():
     # Données du problème
 
@@ -315,10 +426,10 @@ def main():
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
     #listeTaillePop = [10,20,50,100]
-    listeTaillePop = [10]
+    listeTaillePop = [1]
     #listeNbRun = [100,500,2500,5000]
-    listeNbRun = [1000]
-    nbTest = 2
+    listeNbRun = [10000]
+    nbTest = 10
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
             best = 0
@@ -333,8 +444,10 @@ def main():
             print("Temps d'exécution moyen : ", (end - start)/nbTest)
             print()
 
+    #pop = rechercheLocale2optPopulationGRASP(100,100,100,24,24,kappa,sigma)
+    #for i in range(0, 10):
+    #    print(pop[i][0], " : ", pop[i][1])
 
-    #taillePop = 20
     #pop = construirePopulationSolution(taillePop, 2000, 24, 10, kappa, sigma)
     #for i in range(0, taillePop):
     #    print(pop[i][0], " : ", pop[i][1])
