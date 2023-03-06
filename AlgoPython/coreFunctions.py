@@ -1,5 +1,8 @@
 import random
 import numpy as np
+from scipy.optimize import linear_sum_assignment
+
+# Retourne une affectation aléatoire des opérateurs aux positions dans le roulement (vecteur y_ir)
 def creerAffectations(size):
     base = []
     for i in range(0, size):
@@ -8,77 +11,44 @@ def creerAffectations(size):
     return base
 
 
-# Fonction vérifiant si pour une semaine donnée, chaque opérateur peut effectuer le poste qui lui a été attribué
-# Dans le cas contraire, on procède à des échanges de postes entre les opérateurs
-def resoudreSemaine(semaine, cardO, kappa, sigma):
-    succes = True # permet d'obtenir le statut de la réparation de la semaine
-    listeOperateurs = []  # sera utilisé plus tard pour l'équité dans le remplacement
-    for i in range(0, cardO):
-        listeOperateurs.append(i)
+# Fonction principale permettant de résoudre de manière optimale les problèmes d'opérateurs mal affectés
+def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
 
-    incomp = [] # vecteur contenant les opérateurs i non compétents pour leurs postes actuels
-    for i in range(0, cardO):
-        if kappa[i][semaine[i]] == 0:
-            incomp.append(i)
-    if len(incomp) == 0:
-        return semaine, succes
+    # On crée ici la matrice des coûts de chaque association opérateur/position dans le roulement.
+    # Le coût vaut 10000 si la personne est incompétente ou si son poste actuel n'est pas sur le même créneau horaire.
+    # Le coût vaut 0 s'il s'agit du poste prévu pour l'opérateur dans le roulement.
+    # Le coût vaut 1 s'il s'agit d'un poste dont l'opérateur possède la compétence, situé sur le même créneau horaire
+    # et différent de son poste prévu par le roulement.
+    matrice = []
+    for i in range(cardO):
+        ligneI = []
+        posteI = semaine[i]
+        for p in range(cardO):
+            if kappa[i][p] == 0 or sigma[posteI][p] == 0:
+                ligneI.append(10000)
+            elif p == posteI:
+                ligneI.append(0)
+            else:
+                ligneI.append(1)
+        matrice.append(ligneI)
 
-    stop = False
-    amelioration = False
+    # On appelle la fonction linear_sum_assignment de la librairie scipy, qui utilise l'algorithme hongrois
+    # (algorithme de Kuhn-Munkres) afin de résoudre le problème d'affectation de poids minimum.
+    cost = np.array(matrice)
+    row_ind, col_ind = linear_sum_assignment(cost)
+    insat = cost[row_ind, col_ind].sum()
 
-    while not stop: # on poursuit les permutations s'il reste des gens mal affectés et que la solution reste faisable
-        amelioration = False # permet de savoir si un échange intelligent a été trouvé
-        if len(incomp) >= 2: # on vérifie si on peut faire un échange intelligent
-            i = 0 # ici, i et j représentent les deux opérateurs incompétents que l'on souhaite échanger
-            while i < len(incomp) and not amelioration:
-                j = i
-                while j < len(incomp) and not amelioration:
-                    posteI = semaine[incomp[i]]
-                    posteJ = semaine[incomp[j]]
-                    # si i et j possèdent chacun la compétence de l'autre que ces postes sont sur le même créneau
-                    # horaire, alors on les permute
-                    if kappa[incomp[i]][posteJ] == 1 and kappa[incomp[j]][posteI] == 1 and sigma[posteI][posteJ] == 1:
-                        amelioration = True
-                        temp = semaine[incomp[i]]
-                        semaine[incomp[i]] = semaine[incomp[j]]
-                        semaine[incomp[j]] = temp
-                        operateur1 = incomp[i]
-                        operateur2 = incomp[j]
-                        incomp.remove(operateur1)
-                        incomp.remove(operateur2)
-                    else:
-                        j += 1
-                i += 1
-        # À présent, s'il ne reste plus qu'un seul opérateur incompétent ou s'il en reste plus et
-        # qu'aucun échange intelligent n'est possible, on permute un incompétent et un double compétent
-        if len(incomp) == 1 or (len(incomp) >= 2 and not amelioration):
-            amelioration = False
-            randomOpe = 0
-            random.shuffle(listeOperateurs) # on mélange la liste des opérateurs pour ne pas toujours sélectionner le même
-            while randomOpe < cardO and not amelioration:
-                i = listeOperateurs[randomOpe]
-                # si l'opérateur choisi aléatoirement possède la compétente manquante à l'incompétent, que l'incompétent
-                # possède la compétence pour son poste et que les deux postes sont permutables, alors on échange leurs postes
-                if kappa[i][semaine[incomp[0]]] == 1 and kappa[incomp[0]][semaine[i]] and sigma[semaine[incomp[0]]][semaine[i]]:
-                    amelioration = True
-                    temp = semaine[i]
-                    semaine[i] = semaine[incomp[0]]
-                    semaine[incomp[0]] = temp
-                    operateur1 = incomp[0]
-                    incomp.remove(operateur1)
-                randomOpe += 1
-
-        # S'il ne reste plus d'opérateur incompétent ou si on ne peut pas réaliser
-        # de permutation améliorante, alors on sort de la boucle
-        if len(incomp) == 0 or not amelioration:
-            stop = True
-
-    # si lors du dernier essai de permutation, nous n'avons pas trouvé de permutation,
-    # alors on considère que l'affectation Y_ir des opérateurs au roulement ne peut pas donner de solution valide
-    if amelioration:
-        return semaine, succes
+    # Si le poids retourné par l'algorithme hongrois est supérieur à 10000, alors on est dans le cas où il n'est
+    # pas possible de trouver une solution au problème sans changer le créneau horaire d'un opérateur ou dans le
+    # cas où un poste ne peut être pris en charge par personne.
+    if insat < 10000:
+        newSemaine = []
+        for i in range(cardO):
+            newSemaine.append(col_ind[i])
+        # Le booléen représente la faisabilité de la solution
+        return newSemaine, True
     else:
-        return semaine, not succes
+        return semaine, False
 
 
 # Fonction secondaire permettant de calculer l'insatisfaction de chaque opérateur à la partir de la
@@ -118,11 +88,15 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     # Si pour une semaine donnée, aucune affectation n'est possible, on retourne une solution vide
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
-        semaineFinale, faisable = resoudreSemaine(semaineInit.copy(), cardO, kappa, sigma)
+        #print("semaine", s)
+        semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
             return [None, None, None, False]
         trameFinale.append(semaineFinale)
         insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
+        #print("avant :", semaineInit)
+        #print("apres :", semaineFinale)
+        #print("insatSemaine :", insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 

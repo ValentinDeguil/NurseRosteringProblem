@@ -1,6 +1,6 @@
 import random
 import numpy as np
-import coreFunctionsAmelioration
+import coreFunctions
 import methode2opt
 
 def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma):
@@ -35,10 +35,10 @@ def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma):
             comptage[j][indexOperateur] = 0
         sol[position] = indexOperateur
         operateursRestants.remove(indexOperateur)
-    return coreFunctionsAmelioration.construireSol(cardO,cardS,kappa,sigma,False,sol.copy())
+    return coreFunctions.construireSol(cardO,cardS,kappa,sigma,False,sol.copy())
 
 def constructionGRASP(taillePopInit, taillePopFinale, nbRunInit, cardO, cardS, kappa, sigma):
-    pop = coreFunctionsAmelioration.construirePopulationSolution(taillePopInit, nbRunInit, cardO, cardS, kappa, sigma)
+    pop = coreFunctions.construirePopulationSolution(taillePopInit, nbRunInit, cardO, cardS, kappa, sigma)
     pop.sort()
 
     comptage = np.zeros((cardO,cardO))
@@ -92,6 +92,7 @@ def rechercheLocale2optPopulationGRASP(taillePopInit, taillePopFinale, nbRunInit
     return pop
 
 
+# Retourne la somme des valeurs des fonctions objectifs de l'ensemble d'une population de solutions
 def sommeInsatisfactionPopulation(pop):
     nbSolution = len(pop)
     res = 0

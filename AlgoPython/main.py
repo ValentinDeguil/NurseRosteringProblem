@@ -2,7 +2,6 @@ import time
 import coreFunctions
 import methode2opt
 import methodeGRASP
-import coreFunctionsAmelioration
 
 def main():
     # Données du problème
@@ -62,34 +61,34 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    #listeTaillePop = [10,20,50,100,200]
-    listeTaillePop = [5,10,15,20,25]
-    #listeTaillePop = [100]
-    listeNbRun = [100,500,2500,5000,10000]
-    #listeNbRun = [1000]
-    nbTest = 1
-    for i in range(len(listeTaillePop)):
-        for j in range(len(listeNbRun)):
-            best = 0
-            start = time.time()
-            for k in range(nbTest):
-                pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
-                best += pop[0][0]
-            end = time.time()
-            bestVal = best/nbTest
-            print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
-            print("bestVal moyen = ", bestVal, "         ")
-            print("Temps d'exécution moyen : ", (end - start)/nbTest)
-            print()
+    ##listeTaillePop = [10,20,50,100,200]
+    #listeTaillePop = [5,10,15,20,25]
+    ##listeTaillePop = [100]
+    #listeNbRun = [100,500,2500,5000,10000]
+    ##listeNbRun = [1000]
+    #nbTest = 1
+    #for i in range(len(listeTaillePop)):
+    #    for j in range(len(listeNbRun)):
+    #        best = 0
+    #        start = time.time()
+    #        for k in range(nbTest):
+    #            pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+    #            best += pop[0][0]
+    #        end = time.time()
+    #        bestVal = best/nbTest
+    #        print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
+    #        print("bestVal moyen = ", bestVal, "         ")
+    #        print("Temps d'exécution moyen : ", (end - start)/nbTest)
+    #        print()
 
-    #pop = methodeGRASP.rechercheLocale2optPopulationGRASP(100,100,100,24,24,kappa,sigma)
-    #for i in range(0, 10):
+    #pop = methodeGRASP.rechercheLocale2optPopulationGRASP(5,5,100,24,24,kappa,sigma)
+    #for i in range(0, 5):
     #    print(pop[i][0], " : ", pop[i][1])
 
-    #start = time.time()
-    #methodeGRASP.methode2optGRASP(5, 100, 24, 15, kappa, sigma)
-    #end = time.time()
-    #print("Temps d'exécution : ", end - start)
+    start = time.time()
+    methodeGRASP.methode2optGRASP(5, 100, 24, 24, kappa, sigma)
+    end = time.time()
+    print("Temps d'exécution : ", end - start)
 
     #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, True, None)
     #print("sol = ", sol[0], " : ", sol[1])

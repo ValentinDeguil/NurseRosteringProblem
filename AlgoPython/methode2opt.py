@@ -1,5 +1,4 @@
-#import coreFunctions
-import coreFunctionsAmelioration
+import coreFunctions
 def rechercheLocale2optSolution(solInit, cardO, cardS, kappa, sigma):
     found = False # la fonction s'arrête dès qu'un meilleur voisin est trouvé
     affectationsInit = solInit[1]
@@ -13,7 +12,7 @@ def rechercheLocale2optSolution(solInit, cardO, cardS, kappa, sigma):
             temp = newAffectations[i]
             newAffectations[i] = newAffectations[j]
             newAffectations[j] = temp
-            newSol = coreFunctionsAmelioration.construireSol(cardO, cardS, kappa, sigma, False, newAffectations)
+            newSol = coreFunctions.construireSol(cardO, cardS, kappa, sigma, False, newAffectations)
             valueNewSol = newSol[0]
             if newSol[3]: # si la solution générée est faisable...
                 if valueNewSol < valueInit:  # et meilleure que la solution initiale
@@ -29,7 +28,7 @@ def rechercheLocale2optSolution(solInit, cardO, cardS, kappa, sigma):
 # Fonction principale appliquant un algorithme de recherche locale 2-opt sur une population de solutions
 def rechercheLocale2optPopulation(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
     # on construit la population de solutions initiale
-    pop = coreFunctionsAmelioration.construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
+    pop = coreFunctions.construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
     pop.sort()
 
     #print("Avant")
