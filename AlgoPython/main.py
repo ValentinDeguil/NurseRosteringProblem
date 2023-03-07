@@ -61,24 +61,45 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    #listeTaillePop = [10,20,50,100,200]
-    #listeTaillePop = [5,10,15,20,25]
-    listeTaillePop = [1]
-    #listeNbRun = [100,500,2500,5000,10000]
-    listeNbRun = [50]
-    nbTest = 30
+    ##listeTaillePop = [10,20,50,100,200]
+    ##listeTaillePop = [5,10,15,20,25]
+    #listeTaillePop = [1]
+    ##listeNbRun = [100,500,2500,5000,10000]
+    #listeNbRun = [50]
+    #nbTest = 30
+    #for i in range(len(listeTaillePop)):
+    #    for j in range(len(listeNbRun)):
+    #        best = 0
+    #        start = time.time()
+    #        for k in range(nbTest):
+    #            pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+    #            best += pop[0][0]
+    #        end = time.time()
+    #        bestVal = best/nbTest
+    #        print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
+    #        print("bestVal moyen = ", bestVal, "         ")
+    #        print("Temps d'exécution moyen : ", (end - start)/nbTest)
+    #        print()
+
+    #test juste grasp
+    # listeTaillePop = [10,20,50,100,200]
+    # listeTaillePop = [5,10,15,20,25]
+    listeTaillePop = [10,20,50]
+    # listeNbRun = [100,500,2500,5000,10000]
+    listeNbRun = [100,500,1000]
+    nbTest = 50
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
             best = 0
             start = time.time()
             for k in range(nbTest):
-                pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+                pop = methodeGRASP.constructionGRASP(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
                 best += pop[0][0]
             end = time.time()
-            bestVal = best/nbTest
+            bestVal = best / nbTest
             print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
             print("bestVal moyen = ", bestVal, "         ")
-            print("Temps d'exécution moyen : ", (end - start)/nbTest)
+            print("Temps d'exécution moyen : ", (end - start) / nbTest)
             print()
 
     #listeTaillePop = [3]

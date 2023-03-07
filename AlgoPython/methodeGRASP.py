@@ -72,6 +72,8 @@ def constructionGRASP(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
         if newSol[3]:
             cpt += 1
             popFinale.append(newSol.copy())
+
+    popFinale.sort()
     return popFinale
 
 # Fonction principale générant une population avec la méthode GRASP et qui l'améliore avec la méthode 2-opt.
