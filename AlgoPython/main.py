@@ -61,45 +61,47 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    ##listeTaillePop = [10,20,50,100,200]
+    #listeTaillePop = [10,20,50,100,200]
     #listeTaillePop = [5,10,15,20,25]
-    ##listeTaillePop = [100]
+    listeTaillePop = [1]
     #listeNbRun = [100,500,2500,5000,10000]
-    ##listeNbRun = [1000]
-    #nbTest = 1
-    #for i in range(len(listeTaillePop)):
-    #    for j in range(len(listeNbRun)):
-    #        best = 0
-    #        start = time.time()
-    #        for k in range(nbTest):
-    #            pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
-    #            best += pop[0][0]
-    #        end = time.time()
-    #        bestVal = best/nbTest
-    #        print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
-    #        print("bestVal moyen = ", bestVal, "         ")
-    #        print("Temps d'exécution moyen : ", (end - start)/nbTest)
-    #        print()
-
-    listeTaillePop = [1, 2, 3, 4, 5]
-    taillePop = 1
-    listeNbRun = [5, 50, 100]
-    nbRunInit = 0
-    nbTest = 100
+    listeNbRun = [50]
+    nbTest = 30
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
             best = 0
             start = time.time()
             for k in range(nbTest):
-                print(k)
-                pop = methodeGRASP.rechercheLocale2optPopulationGRASP(listeTaillePop[i],listeNbRun[j],24,24,kappa,sigma)
+                pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
                 best += pop[0][0]
             end = time.time()
-            bestVal = best / nbTest
+            bestVal = best/nbTest
             print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
             print("bestVal moyen = ", bestVal, "         ")
             print("Temps d'exécution moyen : ", (end - start)/nbTest)
             print()
+
+    #listeTaillePop = [3]
+    ##listeTaillePop = [1, 2, 3, 4, 5]
+    #listeNbRun = [50]
+    ##listeNbRun = [5, 50, 100]
+    #nbTest = 50
+    #for i in range(len(listeTaillePop)):
+    #    for j in range(len(listeNbRun)):
+    #        best = 0
+    #        start = time.time()
+    #        for k in range(nbTest):
+    #            print(k)
+    #            pop = methodeGRASP.rechercheLocale2optPopulationGRASP(listeTaillePop[i],listeNbRun[j],24,24,kappa,sigma)
+    #            best += pop[0][0]
+    #        end = time.time()
+    #        bestVal = best / nbTest
+    #        print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
+    #        print("bestVal moyen = ", bestVal, "         ")
+    #        print("Temps d'exécution moyen : ", (end - start)/nbTest)
+    #        print()
+    #        for m in range(listeTaillePop[i]):
+    #            print(pop[m][0], " : ", pop[m][1])
 
     #taillePop = 5
     #start = time.time()

@@ -23,13 +23,21 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
     for i in range(cardO):
         ligneI = []
         posteI = semaine[i]
-        for p in range(cardO):
-            if kappa[i][p] == 0 or sigma[posteI][p] == 0:
-                ligneI.append(10000)
-            elif p == posteI:
-                ligneI.append(0)
-            else:
-                ligneI.append(1)
+        if kappa[i][posteI] == 0:
+            for p in range(cardO):
+                if kappa[i][p] == 0 or sigma[posteI][p] == 0:
+                    ligneI.append(10000)
+                else:
+                    ligneI.append(0)
+        else:
+            for p in range(cardO):
+                if kappa[i][p] == 0 or sigma[posteI][p] == 0:
+                    ligneI.append(10000)
+                elif p == posteI:
+                    ligneI.append(0)
+                else:
+                    ligneI.append(1)
+
         matrice.append(ligneI)
 
     # On appelle la fonction linear_sum_assignment de la librairie scipy, qui utilise l'algorithme hongrois
