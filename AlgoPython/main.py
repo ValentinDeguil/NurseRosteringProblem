@@ -63,17 +63,17 @@ def main():
 
     #listeTaillePop = [10,20,50,100,200]
     #listeTaillePop = [5,10,15,20,25]
-    listeTaillePop = [1, 2, 3, 4, 5]
+    listeTaillePop = [10, 20, 50, 100]
     #listeNbRun = [100,500,2500,5000,10000]
-    listeNbRun = [5, 50, 100]
-    nbTest = 2
+    listeNbRun = [100, 500, 1000, 2000]
+    nbTest = 50
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
             sumObj1 = 0
             sumObj2 = 0
             start = time.time()
             for k in range(nbTest):
-                pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+                pop = methodeGRASP.constructionGRASP(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
                 sumObj2 += pop[0][0]
                 minObj1 = 1000
                 for m in range(listeTaillePop[i]):
