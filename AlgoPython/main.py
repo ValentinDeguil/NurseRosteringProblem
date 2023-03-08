@@ -66,7 +66,7 @@ def main():
     listeTaillePop = [1, 2, 3, 4, 5]
     #listeNbRun = [100,500,2500,5000,10000]
     listeNbRun = [5, 50, 100]
-    nbTest = 20
+    nbTest = 2
     for i in range(len(listeTaillePop)):
         for j in range(len(listeNbRun)):
             sumObj1 = 0
@@ -75,7 +75,12 @@ def main():
             for k in range(nbTest):
                 pop = methode2opt.rechercheLocale2optPopulation(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
                 sumObj2 += pop[0][0]
-                sumObj1 += pop[0][4]
+                minObj1 = 1000
+                for m in range(listeTaillePop[i]):
+                    if pop[0][0] == pop[m][0] and pop[m][4] < minObj1:
+                        minObj1 = pop[m][4]
+                sumObj1 += minObj1
+
             end = time.time()
             obj2moy = sumObj2/nbTest
             obj1moy = sumObj1 / nbTest
