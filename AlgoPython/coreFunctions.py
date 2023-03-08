@@ -13,7 +13,6 @@ def creerAffectations(size):
 
 # Fonction principale permettant de résoudre de manière optimale les problèmes d'opérateurs mal affectés
 def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
-
     # On crée ici la matrice des coûts de chaque association opérateur/position dans le roulement.
     # Le coût vaut 10000 si la personne est incompétente ou si son poste actuel n'est pas sur le même créneau horaire.
     # Le coût vaut 0 s'il s'agit du poste prévu pour l'opérateur dans le roulement.
@@ -61,7 +60,7 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
 
 # Fonction secondaire permettant de calculer l'insatisfaction de chaque opérateur à la partir de la
 # semaine initiale prévue et de sa version réparée (lorsque des opérateurs étaient incompétents)
-def calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa):
+def calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa):
     scores = np.zeros(cardO)
     for i in range(0,cardO):
         postePrevu = semaineInit[i]
@@ -101,20 +100,21 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
         if not faisable:
             return [None, None, None, False]
         trameFinale.append(semaineFinale)
-        insatSemaine = calculInsatisfaction(semaineInit, semaineFinale, cardO, kappa)
+        insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
         #print("avant :", semaineInit)
         #print("apres :", semaineFinale)
         #print("insatSemaine :", insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 
+    valueObjectif1 = max(insatisfaction)
     # On fait la somme de l'insatisfaction de chaque opérateur
-    insatisfactionTotale = 0
+    valueObjectif2 = 0
     for i in range(0, cardO):
-        insatisfactionTotale += insatisfaction[i]
+        valueObjectif2 += insatisfaction[i]
 
     # La solution retournée est au format [valeur fonction objectif, Y_ir, z_isp, estFaisable]
-    return [insatisfactionTotale, affectations, trameFinale, True]
+    return [valueObjectif2, affectations, trameFinale, True, valueObjectif1]
 
 # Fonction principale permettant de construire une population de solutions, ne conservant que les meilleures
 def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sigma):
