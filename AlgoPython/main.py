@@ -2,6 +2,7 @@ import time
 import coreFunctions
 import methode2opt
 import methodeGRASP
+import convertSolutionToText
 
 def main():
     # Données du problème
@@ -61,34 +62,48 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
-    #listeTaillePop = [10,20,50,100,200]
-    #listeTaillePop = [5,10,15,20,25]
-    listeTaillePop = [10, 20, 50, 100]
-    #listeNbRun = [100,500,2500,5000,10000]
-    listeNbRun = [100, 500, 1000, 2000]
-    nbTest = 50
-    for i in range(len(listeTaillePop)):
-        for j in range(len(listeNbRun)):
-            sumObj1 = 0
-            sumObj2 = 0
-            start = time.time()
-            for k in range(nbTest):
-                pop = methodeGRASP.constructionGRASP(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
-                sumObj2 += pop[0][0]
-                minObj1 = 1000
-                for m in range(listeTaillePop[i]):
-                    if pop[0][0] == pop[m][0] and pop[m][4] < minObj1:
-                        minObj1 = pop[m][4]
-                sumObj1 += minObj1
+    ##listeTaillePop = [10,20,50,100,200]
+    ##listeTaillePop = [5,10,15,20,25]
+    #listeTaillePop = [10, 20, 50, 100]
+    ##listeNbRun = [100,500,2500,5000,10000]
+    #listeNbRun = [100, 500, 1000, 2000]
+    #nbTest = 50
+    #for i in range(len(listeTaillePop)):
+    #    for j in range(len(listeNbRun)):
+    #        sumObj1 = 0
+    #        sumObj2 = 0
+    #        start = time.time()
+    #        for k in range(nbTest):
+    #            pop = methodeGRASP.constructionGRASP(listeTaillePop[i], listeNbRun[j], 24, 24, kappa, sigma)
+    #            sumObj2 += pop[0][0]
+    #            minObj1 = 1000
+    #            for m in range(listeTaillePop[i]):
+    #                if pop[0][0] == pop[m][0] and pop[m][4] < minObj1:
+    #                    minObj1 = pop[m][4]
+    #            sumObj1 += minObj1
+    #        end = time.time()
+    #        obj2moy = sumObj2/nbTest
+    #        obj1moy = sumObj1 / nbTest
+    #        print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
+    #        print("obj2 moyen = ", obj2moy, "         ")
+    #        print("obj1 moyen = ", obj1moy, "         ")
+    #        print("Temps d'exécution moyen : ", (end - start)/nbTest)
+    #        print()
 
-            end = time.time()
-            obj2moy = sumObj2/nbTest
-            obj1moy = sumObj1 / nbTest
-            print("taillePop = ", listeTaillePop[i], "nbRun = ", listeNbRun[j])
-            print("obj2 moyen = ", obj2moy, "         ")
-            print("obj1 moyen = ", obj1moy, "         ")
-            print("Temps d'exécution moyen : ", (end - start)/nbTest)
-            print()
+    ##test verif solution
+    #pop = methodeGRASP.constructionGRASP(5, 100, 24, 24, kappa, sigma)
+    #convertSolutionToText.convertSolution(pop[0], kappa, sigma)
+    #pop = methode2opt.rechercheLocale2optPopulation(20, 1000, 24, 15, kappa, sigma)
+    #for m in range(5):
+    #    print(pop[m][0], " : ", pop[m][1])
+
+    sol = coreFunctions.construireSol(24, 15, kappa, sigma, False, [17,5,3,6,7,4,0,8,19,9,18,10,11,12,13,14,21,1,15,2,22,16,20,23])
+    print(sol[0], " : ", sol[1]);
+    print(sol[1])
+    print()
+    affect = sol[2]
+    for i in range(15):
+        print(affect[i])
 
     ##test juste grasp
     ## listeTaillePop = [10,20,50,100,200]

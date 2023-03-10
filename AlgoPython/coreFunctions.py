@@ -98,12 +98,12 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
         #print("semaine", s)
         semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
-            return [None, None, None, False]
+            return [None, None, None, False, None]
         trameFinale.append(semaineFinale)
         insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
         #print("avant :", semaineInit)
         #print("apres :", semaineFinale)
-        #print("insatSemaine :", insatSemaine)
+        print("insatSemaine :",s, insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 
