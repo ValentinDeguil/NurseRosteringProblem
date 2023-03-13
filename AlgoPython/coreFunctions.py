@@ -103,7 +103,7 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
         insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
         #print("avant :", semaineInit)
         #print("apres :", semaineFinale)
-        print("insatSemaine :",s, insatSemaine)
+        #print("insatSemaine :",s, insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 
@@ -183,3 +183,54 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
                         else:
                             j += -1
     return topSolutions
+
+def getAffectationsJour(sol, kappa, sigma, rho, d):
+    #[valueObjectif2, affectations, trameFinale, True, valueObjectif1]
+    trameFinale = sol[2]
+    cardS = len(trameFinale)
+    cardO = len(trameFinale[0])
+    insatRA = np.zeros(cardO)
+    listeRemplacements = []
+
+    # On dresse la liste des opérateurs à 80%
+    operateursRepos = []
+    for i in range(cardO):
+        if d[i] != -1:
+            operateursRepos.append((i))
+
+    # On s'occupe du remplacement des opérateurs choisis dans un ordre aléatoire
+    random.shuffle(operateursRepos)
+    for RA in operateursRepos:
+        for s in range(cardS):
+            #print("trame = ", trameFinale[s])
+            affectationSemaine = trameFinale[s]
+            posteRA = affectationSemaine[RA]
+            # Si l'opérateur en RA est affecté à un poste rouleur, on ne fait rien
+            if rho[posteRA] == 1:
+                rouleursCandidats = []
+                jourRA = (d[RA] + s) % 5 # Jour précis du RA
+                #print("Il faut remplacer", RA, "le jour", jourRA)
+                for i2 in range(cardO):
+                    posteI2 = affectationSemaine[i2]
+                    # L'opérateur peut remplacer s'il travaille ce jour, est compétent et est rouleur
+                    if (d[i2] == -1 or (d[i2] + s) % 5 != jourRA) and rho[posteI2] == 0 and kappa[i2][posteRA] == 1:
+                        rouleursCandidats.append(i2)
+
+                # Une fois que l'on a la liste des rouleurs pouvant remplacer le RA, on choisit celui avec le score le moins élevé
+                min = 10000
+                rouleurChoisi = -1
+                random.shuffle(rouleursCandidats)
+                for rouleur in rouleursCandidats:
+                    insatRouleur = insatRA[rouleur]
+                    if insatRouleur < min:
+                        min = insatRouleur
+                        rouleurChoisi = rouleur
+
+                if (rouleurChoisi == -1):
+                    print("PROBLEME, PERSONNE NE PEUT REMPLACER CE JOUR")
+                listeRemplacements.append([jourRA + 7*s, rouleurChoisi, posteRA])
+                insatRA[rouleurChoisi] += 1
+
+    #print()
+    #print("insatRA = ", insatRA)
+    #print(listeRemplacements)

@@ -62,6 +62,9 @@ def main():
              [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
              [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
 
+    rho = [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0]
+    d = [3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+
     ##listeTaillePop = [10,20,50,100,200]
     ##listeTaillePop = [5,10,15,20,25]
     #listeTaillePop = [10, 20, 50, 100]
@@ -93,17 +96,24 @@ def main():
     ##test verif solution
     #pop = methodeGRASP.constructionGRASP(5, 100, 24, 24, kappa, sigma)
     #convertSolutionToText.convertSolution(pop[0], kappa, sigma)
-    #pop = methode2opt.rechercheLocale2optPopulation(20, 1000, 24, 15, kappa, sigma)
-    #for m in range(5):
+    #pop = methode2opt.rechercheLocale2optPopulation(1, 50, 24, 24, kappa, sigma)
+    #for m in range(1):
     #    print(pop[m][0], " : ", pop[m][1])
+    #coreFunctions.getAffectationsJour(pop[0], kappa, sigma, rho, d)
 
-    sol = coreFunctions.construireSol(24, 15, kappa, sigma, False, [17,5,3,6,7,4,0,8,19,9,18,10,11,12,13,14,21,1,15,2,22,16,20,23])
-    print(sol[0], " : ", sol[1]);
-    print(sol[1])
-    print()
-    affect = sol[2]
-    for i in range(15):
-        print(affect[i])
+    # test xijp
+    for i in range(20000):
+        sol = coreFunctions.construireSol(24, 24, kappa, sigma, True, None)
+        if sol[3]:
+            coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+
+    #sol = coreFunctions.construireSol(24, 15, kappa, sigma, False, [17,5,3,6,7,4,0,8,19,9,18,10,11,12,13,14,21,1,15,2,22,16,20,23])
+    #print(sol[0], " : ", sol[1]);
+    #print(sol[1])
+    #print()
+    #affect = sol[2]
+    #for i in range(15):
+    #    print(affect[i])
 
     ##test juste grasp
     ## listeTaillePop = [10,20,50,100,200]
