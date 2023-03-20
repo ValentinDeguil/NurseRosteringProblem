@@ -2,7 +2,7 @@ import time
 import coreFunctions
 import methode2opt
 import methodeGRASP
-import convertSolutionToText
+import convertSolution
 
 def main():
     # Données du problème
@@ -96,16 +96,36 @@ def main():
     ##test verif solution
     #pop = methodeGRASP.constructionGRASP(5, 100, 24, 24, kappa, sigma)
     #convertSolutionToText.convertSolution(pop[0], kappa, sigma)
-    #pop = methode2opt.rechercheLocale2optPopulation(1, 50, 24, 24, kappa, sigma)
-    #for m in range(1):
+    #pop = methode2opt.rechercheLocale2optPopulation(20, 50, 24, 24, kappa, sigma)
+    #for m in range(20):
     #    print(pop[m][0], " : ", pop[m][1])
     #coreFunctions.getAffectationsJour(pop[0], kappa, sigma, rho, d)
 
-    # test xijp
-    for i in range(20000):
-        sol = coreFunctions.construireSol(24, 24, kappa, sigma, True, None)
-        if sol[3]:
-            coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    ## test xijp
+    #cpt1 = 0
+    #cpt2 = 0
+    #for i in range(20000):
+    #    sol = coreFunctions.construireSol(24, 24, kappa, sigma, True, None)
+    #    if sol[3]:
+    #        cpt1 += 1
+    #        affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    #        if affect[0]:
+    #            cpt2 += 1
+    #print("cpt1 = ", cpt1)
+    #print("cpt2 = ", cpt2)
+
+    #pop = methode2opt.rechercheLocale2optPopulation(20, 500, 24, 24, kappa, sigma)
+    #sol = pop[0]
+    #print(sol[0], " : ", sol[1]);
+    #if sol[3]:
+    #    affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    #    if affect[0]:
+    #        convertSolution.convertSolutionCSV(sol, affect[1], d)
+
+    #sol = coreFunctions.construireSol(24, 22, kappa, sigma, False, [17,2,10,3,5,14,0,6,15,7,4,8,9,11,12,13,18,1,16,19,21,20,22,23])
+    #print(sol[0])
+    sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [6,2,12,3,4,18,0,5,19,7,22,8,9,11,14,15,20,1,16,10,21,17,23,13])
+    print(sol[0])
 
     #sol = coreFunctions.construireSol(24, 15, kappa, sigma, False, [17,5,3,6,7,4,0,8,19,9,18,10,11,12,13,14,21,1,15,2,22,16,20,23])
     #print(sol[0], " : ", sol[1]);

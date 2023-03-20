@@ -38,6 +38,13 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
                     ligneI.append(1)
 
         matrice.append(ligneI)
+    #print("matrice")
+    #for i in range(24):
+    #    ligne = str(i) + " : "
+    #    for i2 in range(24):
+    #        ligne += str(matrice[i][i2])
+    #        ligne += " "
+    #    print(ligne)
 
     # On appelle la fonction linear_sum_assignment de la librairie scipy, qui utilise l'algorithme hongrois
     # (algorithme de Kuhn-Munkres) afin de résoudre le problème d'affectation de poids minimum.
@@ -55,7 +62,13 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
         # Le booléen représente la faisabilité de la solution
         return newSemaine, True
     else:
-        return semaine, False
+        newSemaine = []
+        for i in range(cardO):
+            newSemaine.append(col_ind[i])
+        # Le booléen représente la faisabilité de la solution
+        return newSemaine, True
+        #return semaine, False #TODO attention ne pas oublier de remettre
+
 
 
 # Fonction secondaire permettant de calculer l'insatisfaction de chaque opérateur à la partir de la
@@ -95,15 +108,15 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     # Si pour une semaine donnée, aucune affectation n'est possible, on retourne une solution vide
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
-        #print("semaine", s)
+        print("semaine", s)
         semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
             return [None, None, None, False, None]
         trameFinale.append(semaineFinale)
         insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
-        #print("avant :", semaineInit)
-        #print("apres :", semaineFinale)
-        #print("insatSemaine :",s, insatSemaine)
+        print("avant :", semaineInit)
+        print("apres :", semaineFinale)
+        print("insatSemaine",s , "=", insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 
@@ -191,6 +204,7 @@ def getAffectationsJour(sol, kappa, sigma, rho, d):
     cardO = len(trameFinale[0])
     insatRA = np.zeros(cardO)
     listeRemplacements = []
+    faisable = True
 
     # On dresse la liste des opérateurs à 80%
     operateursRepos = []
@@ -227,10 +241,11 @@ def getAffectationsJour(sol, kappa, sigma, rho, d):
                         rouleurChoisi = rouleur
 
                 if (rouleurChoisi == -1):
-                    print("PROBLEME, PERSONNE NE PEUT REMPLACER CE JOUR")
+                    faisable = False
                 listeRemplacements.append([jourRA + 7*s, rouleurChoisi, posteRA])
                 insatRA[rouleurChoisi] += 1
 
     #print()
     #print("insatRA = ", insatRA)
     #print(listeRemplacements)
+    return [faisable, listeRemplacements]
