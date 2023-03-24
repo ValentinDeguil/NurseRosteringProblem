@@ -4,6 +4,23 @@ import methode2opt
 import methodeGRASP
 import convertSolution
 
+def creerSigma(creneaux):
+    cardP = len(creneaux)
+    sigma = []
+    for p in range(cardP):
+        ligne = []
+        for p2 in range(cardP):
+            if creneaux[p] == creneaux[p2]:
+                ligne.append(1)
+            else:
+                ligne.append(0)
+        sigma.append(ligne)
+    for i in range(cardP):
+        print(sigma[i])
+    return sigma
+
+#creerSigma([0,2,1,2,0,1,3,1,0,2,1,2,0,1,3,1,0,1,2,1,0,3,1,2,0])
+
 def main():
     # Données du problème
 
@@ -124,8 +141,8 @@ def main():
 
     #sol = coreFunctions.construireSol(24, 22, kappa, sigma, False, [17,2,10,3,5,14,0,6,15,7,4,8,9,11,12,13,18,1,16,19,21,20,22,23])
     #print(sol[0])
-    sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [6,2,12,3,4,18,0,5,19,7,22,8,9,11,14,15,20,1,16,10,21,17,23,13])
-    print(sol[0])
+    #sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [6,2,12,3,4,18,0,5,19,7,22,8,9,11,14,15,20,1,16,10,21,17,23,13])
+    #print(sol[0])
 
     #sol = coreFunctions.construireSol(24, 15, kappa, sigma, False, [17,5,3,6,7,4,0,8,19,9,18,10,11,12,13,14,21,1,15,2,22,16,20,23])
     #print(sol[0], " : ", sol[1]);
@@ -156,18 +173,18 @@ def main():
     #        print("Temps d'exécution moyen : ", (end - start) / nbTest)
     #        print()
 
-    #listeTaillePop = [3]
+    #listeTaillePop = [10]
     ##listeTaillePop = [1, 2, 3, 4, 5]
     #listeNbRun = [50]
     ##listeNbRun = [5, 50, 100]
-    #nbTest = 50
+    #nbTest = 1
     #for i in range(len(listeTaillePop)):
     #    for j in range(len(listeNbRun)):
     #        best = 0
     #        start = time.time()
     #        for k in range(nbTest):
     #            print(k)
-    #            pop = methodeGRASP.rechercheLocale2optPopulationGRASP(listeTaillePop[i],listeNbRun[j],24,24,kappa,sigma)
+    #            pop = methodeGRASP.rechercheLocale2optPopulationGRASP(listeTaillePop[i],listeNbRun[j],24,22,kappa,sigma)
     #            best += pop[0][0]
     #        end = time.time()
     #        bestVal = best / nbTest
@@ -178,16 +195,17 @@ def main():
     #        for m in range(listeTaillePop[i]):
     #            print(pop[m][0], " : ", pop[m][1])
 
-    #taillePop = 5
-    #start = time.time()
-    #pop = methodeGRASP.methode2optGRASP(taillePop, 100, 24, 24, kappa, sigma)
-    #end = time.time()
-    #for i in range(0, taillePop):
-    #    print(pop[i][0], " : ", pop[i][1])
-    #print("Temps d'exécution : ", end - start)
+    #####taillePop = 10
+    #####start = time.time()
+    #####pop = methode2opt.rechercheLocale2optPopulation(taillePop, 100, 24, 17, kappa, sigma)
+    #####end = time.time()
+    #####for i in range(0, taillePop):
+    #####    print(pop[i][0], " : ", pop[i][1])
+    #####print("Temps d'exécution : ", end - start)
 
-    #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, True, None)
-    #print("sol = ", sol[0], " : ", sol[1])
+    sol = coreFunctions.construireSol(24, 17, kappa, sigma, False, [14,3,4,5,6,7,8,9,10,11,12,13,15,20,2,16,18,19,23,0,1,21,22,17])
+    print(sol[0])
+
 
     ##verif optimilité resoudreSemaine
     #cumul = 0

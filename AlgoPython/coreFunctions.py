@@ -62,12 +62,13 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
         # Le booléen représente la faisabilité de la solution
         return newSemaine, True
     else:
-        newSemaine = []
-        for i in range(cardO):
-            newSemaine.append(col_ind[i])
         # Le booléen représente la faisabilité de la solution
-        return newSemaine, True
-        #return semaine, False #TODO attention ne pas oublier de remettre
+        #print(":/")
+        #newSemaine = []
+        #for i in range(cardO):
+        #    newSemaine.append(col_ind[i])
+        #return newSemaine, True
+        return semaine, False #TODO attention ne pas oublier de remettre
 
 
 
@@ -114,9 +115,9 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
             return [None, None, None, False, None]
         trameFinale.append(semaineFinale)
         insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
-        print("avant :", semaineInit)
-        print("apres :", semaineFinale)
-        print("insatSemaine",s , "=", insatSemaine)
+        #print("avant :", semaineInit)
+        #print("apres :", semaineFinale)
+        #print("insatSemaine",s , "=", insatSemaine)
         for i in range(0, cardO):
             insatisfaction[i] += insatSemaine[i]
 
