@@ -109,7 +109,7 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     # Si pour une semaine donnée, aucune affectation n'est possible, on retourne une solution vide
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
-        print("semaine", s)
+        #print("semaine", s)
         semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
         if not faisable:
             return [None, None, None, False, None]

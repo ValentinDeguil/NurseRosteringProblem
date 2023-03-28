@@ -70,8 +70,13 @@ def convertSolutionCSV(solution, affectationsJours, d):
 
             writer.writerow(planningPerso)
 
+# calcul du jour non travaillé pour une semaine donnée d'un opérateur à 80%
+# en fonction du jour non travaillé la première semaine
+def delta_i(s,d_i):
+    return (d_i+s) % 5
 
-def convertSolutionText(solution, kappa, sigma):
+
+def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d):
     #[valueObjectif2, affectations, trameFinale, True, valueObjectif1]
     affectations = solution[1]
     trameFinale  = solution[2]
@@ -83,20 +88,24 @@ def convertSolutionText(solution, kappa, sigma):
     cardJ = 7*cardS
 
 
-    with open("file", "w") as file_object:
+    with open("solutionApprochee", "w") as file_object:
         file_object.write(str(cardO) + "\n") #cardO
         file_object.write(str(cardP) + "\n") #cardP
         file_object.write(str(cardR) + "\n") #cardR
         file_object.write(str(cardS) + "\n") #cardS
 
         ligne = ""
-        for p in range(0, cardP):
-            ligne = ligne + "2"                   #TODO
+        for p in range(cardP):
+            ligne = ligne + str(rho[p])
         file_object.write(ligne + "\n")  # rho
 
+        o = np.zeros(cardJ)
+        for j in range(cardJ):
+            if j % 7 <= 4:
+                o[j] = 1
         ligne = ""
-        for j in range(0, cardJ):
-            ligne = ligne + "2"                    #TODO
+        for j in range(cardJ):
+            ligne += str(int(o[j]))
         file_object.write(ligne + "\n")  # o_j
 
         for i in range(0, cardO):
@@ -111,18 +120,62 @@ def convertSolutionText(solution, kappa, sigma):
                 ligne = ligne + str(sigma[p][p2])
             file_object.write(ligne + "\n")  # sigma_pp'
 
+        delta = np.full((cardO, cardJ), 1)
         for i in range(0, cardO):
+            if d[i] != -1:
+                d_i = d[i]
+                for s in range(0, cardS):
+                    d_is = delta_i(s, d_i)  # rang du jour non travaillé la semaine s
+                    j_s = 7 * s + d_is  # numéro du jour non travaillé
+                    delta[i][j_s] = 0
+        for i in range(cardO):
             ligne = ""
-            for j in range(0, cardJ):
-                ligne = ligne + "2"             #TODO
+            for j in range(cardJ):
+                ligne += str(delta[i][j])
             file_object.write(ligne + "\n")  # delta_ij
+
+        x = []
+        affect = []
+        for p in range(cardP):
+            affect.append(0)
+        for i in range(cardO):
+            ligne = []
+            for j in range(cardJ):
+                ligne.append(affect.copy())
+            x.append(ligne)
+
+        for s in range(cardS):
+            affectSemaine = solution[2][s]
+            for i in range(cardO):
+                posteIS = affectSemaine[i]
+                for j in range(7*s, 7*s+5):
+                    x[i][j][posteIS] = 1
+
+        for i in range(cardO):
+            RA = d[i]
+            if RA != -1:
+                for s in range(cardS):
+                    j = delta_i(s, RA) + s * 7
+                    for p in range(cardP):
+                        x[i][j][p] = 0
+
+        for c in range(len(affectationsJournalieres[1])):
+            changement = affectationsJournalieres[1][c]
+            j = changement[0]
+            i = changement[1]
+            newP = changement[2]
+            for p in range(cardP):
+                x[i][j][p] = 0
+            x[i][j][newP] = 1
+
 
         for i in range(0, cardO):
             for j in range(0, cardJ):
                 ligne = ""
                 for p in range(0, cardP):
-                    ligne = ligne + "2"          #TODO
+                    ligne = ligne + str(x[i][j][p])
                 file_object.write(ligne + "\n")  # x_ijp
+
 
         for i in range(0, cardO):
             ligne = ""
@@ -141,7 +194,7 @@ def convertSolutionText(solution, kappa, sigma):
                         ligne += "1"
                     else:
                         ligne += "0"
-                file_object.write(ligne + "\n")  # x_ijp
+                file_object.write(ligne + "\n")  # z_isp
 
         file_object.write(str(int(solution[0])) + "\n")
 
