@@ -141,7 +141,7 @@ def main(path):
         for j in range(0, cardJ):
             if o[j] == 1 and delta[i][j] == 1:
                 if sum(x[i][j][p] for p in range(0, cardP)) != 1:
-                    print("test3 : i =", i, "j =", j)
+                    #print("test3 : i =", i, "j =", j)
                     test[3] = False
 
     # Test 5 :
@@ -149,7 +149,7 @@ def main(path):
         for j in range(0, cardJ):
             if o[j] == 1 and rho[p] == 1:
                 if sum(x[i][j][p] for i in range(0, cardO)) != 1:
-                    print("test4 : p =", p, "j =", j, "et vaut", sum(x[i][j][p] for i in range(0, cardO)))
+                    #print("test4 : p =", p, "j =", j, "et vaut", sum(x[i][j][p] for i in range(0, cardO)))
                     test[4] = False
 
     # Test 6 :
@@ -186,6 +186,9 @@ def main(path):
         for s in range(0, cardS):
             for p in range(0, cardP):
                 if z[i][s][p] > sum(sigma[p][p2] * y[i][rFunction(s, p2)] for p2 in range(0, cardP)):
+                    print("test 10 faux :",i,s,p)
+                    #for index in range(cardP):
+                        #print("index",i, "", sigma[p][index] * y[i][rFunction(s, index)])
                     test[10] = False
 
     # Test 12 :
@@ -195,9 +198,9 @@ def main(path):
             for p in range(0, cardP):
                 if kappa[i][p] * rho[p] * y[i][rFunction(s, p)] - z[i][s][p] >= 1:
                     sol += 1
+    print("sol =", sol)
+    print("valueObj =", valueObj)
     if sol != valueObj:
-        print("sol =", sol)
-        print("valueObj =", valueObj)
         test[11] = False
 
     echec = False

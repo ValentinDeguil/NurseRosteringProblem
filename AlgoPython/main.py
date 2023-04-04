@@ -166,8 +166,10 @@ def main():
     #    if affect[0]:
     #        convertSolution.convertSolutionCSV(sol, affect[1], d)
 
-    #sol = coreFunctions.construireSol(24, 22, kappa, sigma, False, [17,2,10,3,5,14,0,6,15,7,4,8,9,11,12,13,18,1,16,19,21,20,22,23])
-    #print(sol[0])
+    sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [0,1,12,2,3,13,17,4,16,5,10,6,7,8,9,11,20,18,14,21,23,15,19,22])
+    print(sol[0])
+    affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    print(affect[1])
     #sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [6,2,12,3,4,18,0,5,19,7,22,8,9,11,14,15,20,1,16,10,21,17,23,13])
     #print(sol[0])
 
@@ -222,35 +224,19 @@ def main():
     #        for m in range(listeTaillePop[i]):
     #            print(pop[m][0], " : ", pop[m][1])
 
-    #####taillePop = 10
-    #####start = time.time()
-    #####pop = methode2opt.rechercheLocale2optPopulation(taillePop, 100, 24, 24, kappa, sigma)
-    #####end = time.time()
-    #####for i in range(0, taillePop):
-    #####    print(pop[i][0], " : ", pop[i][1])
-    #####print("Temps d'exécution : ", end - start)
+    ####taillePop = 20
+    ####start = time.time()
+    ####pop = methode2opt.rechercheLocale2optPopulation(taillePop, 100, 24, 22, kappa, sigma)
+    ####end = time.time()
+    ####for i in range(0, taillePop):
+    ####    print(pop[i][0], " : ", pop[i][1])
+    ####print("Temps d'exécution : ", end - start)
+    ####convertSolution.convertSolutionText(pop[0], coreFunctions.getAffectationsJour(pop[0], kappa, sigma, rho, d), kappa, sigma, rho, d)
 
-    sol = coreFunctions.construireSol(24, 24, kappa, sigma, True, None)
-    affectationsJournalieres = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
-    print(sol[0])
-    convertSolution.convertSolutionText(sol, affectationsJournalieres, kappa, sigma, rho, d)
-
-
-    ##verif optimilité resoudreSemaine
-    #cumul = 0
-    #nbTest = 10000
-    #start = time.time()
-    #for i in range(nbTest):
-    #    sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [1, 19, 10, 18, 22, 6, 12, 9, 13, 23, 0, 4, 2, 21, 3, 20, 17, 16, 14, 11, 7, 5, 8, 15])
-    #    #sol = coreFunctionsAmelioration.construireSol(24, 24, kappa, sigma, False, [16, 0, 8, 22, 20, 9, 14, 7, 19, 18, 4, 11, 17, 2, 5, 6, 10, 12, 23, 15, 21, 1, 3, 13])
-    #    #print("sol = ",sol[0]," : ", sol[1])
-    #    cumul += sol[0]
-    #    #print(sol[0])
-    #end = time.time()
-    ##for i in range(24):
-    #    #print("semaine",i,"=",sol[2][i])
-    #print(cumul/nbTest)
-    #print("Temps d'exécution : ", end - start)
+    #sol = coreFunctions.construireSol(24, 24, kappa, sigma, True, None)
+    #affectationsJournalieres = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    #print(sol[0])
+    #convertSolution.convertSolutionText(sol, affectationsJournalieres, kappa, sigma, rho, d)
 
     #pop = coreFunctions.construirePopulationSolution(taillePop, 2000, 24, 10, kappa, sigma)
     #for i in range(0, taillePop):
