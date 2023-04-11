@@ -4,6 +4,7 @@ import coreFunctions
 import methode2opt
 import methodeGRASP
 import convertSolution
+import generateInstance
 
 def creerSigma(creneaux):
     cardP = len(creneaux)
@@ -166,10 +167,51 @@ def main():
     #    if affect[0]:
     #        convertSolution.convertSolutionCSV(sol, affect[1], d)
 
-    sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [0,1,12,2,3,13,17,4,16,5,10,6,7,8,9,11,20,18,14,21,23,15,19,22])
+    tailleInstance = 12
+    #test = generateInstance.generate(tailleInstance)
+    #kappa = test[0].copy()
+    #sigma = test[1].copy()
+    #rho = test[2].copy()
+    #d = test[3].copy()
+    kappa = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+    sigma = [
+        [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ]
+
+    taillePop = 200
+
+    #pop = methode2opt.rechercheLocale2optPopulation(taillePop, 100, tailleInstance, tailleInstance, kappa, sigma)
+    #for i in range(taillePop):
+    #    print(pop[i][0])
+
+    sol = coreFunctions.construireSol(12, 12, kappa, sigma, False, [1,9,6,11,5,4,7,8,0,10,3,2])
     print(sol[0])
-    affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
-    print(affect[1])
+    #affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d)
+    #print(affect[1])
     #sol = coreFunctions.construireSol(24, 24, kappa, sigma, False, [6,2,12,3,4,18,0,5,19,7,22,8,9,11,14,15,20,1,16,10,21,17,23,13])
     #print(sol[0])
 

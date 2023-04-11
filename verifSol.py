@@ -186,7 +186,7 @@ def main(path):
         for s in range(0, cardS):
             for p in range(0, cardP):
                 if z[i][s][p] > sum(sigma[p][p2] * y[i][rFunction(s, p2)] for p2 in range(0, cardP)):
-                    print("test 10 faux :",i,s,p)
+                    #print("test 10 faux :",i,s,p)
                     #for index in range(cardP):
                         #print("index",i, "", sigma[p][index] * y[i][rFunction(s, index)])
                     test[10] = False
