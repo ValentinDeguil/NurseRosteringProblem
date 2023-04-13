@@ -3,7 +3,7 @@ def creerMatrices():
 
     cardO = 36
     cardP = 36
-    dataOperateurs = pd.read_csv('./data2023/operateursExperimentations.csv', sep=",")
+    dataOperateurs = pd.read_csv('./data2023/operateursJoli.csv', sep=",")
 
     kappa = []
     for i in range(cardO):
