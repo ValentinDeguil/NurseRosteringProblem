@@ -1,26 +1,15 @@
 import csv
 import numpy as np
-import pandas as pd
 import datetime
-def convertSolutionCSV(solution, affectationsJours, d):
-    print()
-    print("début")
+def convertSolutionCSV(solution, affectationsJours, d, nomsPostes, nomsOperateurs):
+
     cardS = len(solution[2])
     cardJ = 7 * cardS
-    print(cardS)
 
-    dataOperateurs = pd.read_csv('operateurs.csv', sep=";")
-    cardO = len(dataOperateurs.axes[0])
-    dataNoms = dataOperateurs.iloc[0:cardO, 0:3]
-    cardP = cardO
-    noms = []
-    for i in range(cardO):
-        noms.append(dataNoms.iloc[i, 1] + " " + dataNoms.iloc[i, 2])
-    print(noms)
-
-    dataPostes = pd.read_csv('postes.csv', sep=";")
-    nomsPostes = dataPostes.iloc[0:cardO, 1]
-    print(nomsPostes)
+    #print()
+    #print(cardS)
+    #print(nomsOperateurs)
+    #print(nomsPostes)
 
     date = datetime.datetime(2023, 9, 4)
 
@@ -29,21 +18,21 @@ def convertSolutionCSV(solution, affectationsJours, d):
         if j % 7 <= 4:
             o[j] = 1
 
-    with open('res.csv', 'w', newline='') as file:
+    with open('planningFinal.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        jours = [""]
+        jours = ["",""]
         for s in range(0, cardS):
             jours.extend(["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"])
         writer.writerow(jours)
 
-        dates = [""]
+        dates = ["",""]
         for j in range(0, cardJ):
             dates.append(date.strftime("%d")+"/"+date.strftime("%m")+"/"+date.strftime("%y"))
             date += datetime.timedelta(days=1)
         writer.writerow(dates)
 
-        for i in range(0, cardO):
-            planningPerso = [noms[i]]
+        for i in range(0, len(nomsOperateurs)):
+            planningPerso = [nomsOperateurs[i][0], nomsOperateurs[i][1]]
             for s in range(0, cardS):
                 posteSemaine = solution[2][s][i]
                 nomPoste = nomsPostes[posteSemaine]
@@ -55,7 +44,7 @@ def convertSolutionCSV(solution, affectationsJours, d):
             if d[i] != -1:
                 for s in range(cardS):
                     jourRA = (d[i] + s)%5
-                    planningPerso[7*s + jourRA + 1] = "RA" #décallage de 1 à cause du nom
+                    planningPerso[7*s + jourRA + 2] = "RA" #décallage de 2 à cause des noms et prénoms des opérateurs
 
             index = 0
             while index < len(affectationsJours):
@@ -63,7 +52,7 @@ def convertSolutionCSV(solution, affectationsJours, d):
                 if remplacement[1] == i:
                     jourRemplacement = remplacement[0]
                     posteRemplacement = remplacement[2]
-                    planningPerso[jourRemplacement + 1] = nomsPostes[posteRemplacement]
+                    planningPerso[jourRemplacement + 2] = nomsPostes[posteRemplacement]
                     del affectationsJours[index]
                 else:
                     index += 1

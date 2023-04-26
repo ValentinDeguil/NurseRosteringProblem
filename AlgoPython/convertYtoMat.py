@@ -1,3 +1,7 @@
+# Ce script me permet simplement de convertir un vecteur d'affectation Y en matrice en deux dimensions.
+# Elle peut être réutilisée sous cette forme dans les modèles mathématiques pour vérifier quelles sont les
+# réaffectations optimales en fonction d'un Y donné.
+
 y = [17,2,10,3,5,14,0,6,15,7,4,8,9,11,12,13,18,1,16,19,21,20,22,23]
 
 cardO = 24
