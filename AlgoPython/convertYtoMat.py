@@ -2,9 +2,9 @@
 # Elle peut être réutilisée sous cette forme dans les modèles mathématiques pour vérifier quelles sont les
 # réaffectations optimales en fonction d'un Y donné.
 
-y = [17,2,10,3,5,14,0,6,15,7,4,8,9,11,12,13,18,1,16,19,21,20,22,23]
+y = [4, 1, 19, 14, 5, 13, 18, 15, 0, 8, 6, 9, 11, 3, 2, 7, 16, 21, 23, 17, 20, 12, 10, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
 
-cardO = 24
+cardO = 36
 
 res = "["
 

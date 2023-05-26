@@ -11,7 +11,7 @@ def convertSolutionCSV(solution, affectationsJours, d, nomsPostes, nomsOperateur
     #print(nomsOperateurs)
     #print(nomsPostes)
 
-    date = datetime.datetime(2023, 9, 4)
+    date = datetime.datetime(2023, 9, 4) # premier lundi de la rentrée scolaire 2023
 
     o = np.zeros(cardJ)
     for j in range(0, len(o)):
@@ -186,6 +186,3 @@ def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d
                 file_object.write(ligne + "\n")  # z_isp
 
         file_object.write(str(int(solution[0])) + "\n")
-
-
-

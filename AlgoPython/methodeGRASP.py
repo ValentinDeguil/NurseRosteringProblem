@@ -5,7 +5,7 @@ import methode2opt
 
 
 # Fonction secondaire retournant une solution issue d'une population initiale, selon la méthode GRASP.
-def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma):
+def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma, rho, fac):
     # On crée un ensemble de vecteurs utiles pour générer des solutions équitables entre les opérateurs.
     randomPosition = []
     operateursRestants = []
@@ -47,13 +47,13 @@ def genere1solutionGRASP(comptage, taillePop, cardO, cardS, kappa, sigma):
         # On retire l'opérateur sélectionné de la liste des candidats pour les autres emplacements.
         operateursRestants.remove(indexOperateur)
 
-    return coreFunctions.construireSol(cardO,cardS,kappa,sigma,False,sol.copy())
+    return coreFunctions.construireSol(cardO,cardS,kappa,sigma,False,sol.copy(),rho,fac)
 
 
 # Fonction secondaire retournant une population GRASP construite à partir d'une population de solutions aléatoires.
-def constructionGRASP(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
+def constructionGRASP(taillePop, nbRunInit, cardO, cardS, kappa, sigma, rho, fac):
     # On conserve les "taillePop" meilleures solutions parmi les "nbRunInit" générées
-    pop = coreFunctions.construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma)
+    pop = coreFunctions.construirePopulationSolution(taillePop, nbRunInit, cardO, cardS, kappa, sigma, rho, fac)
     pop.sort()
 
     # On mesure le potentiel de chaque opérateur par rapport à chaque emplacement dans le roulement.
@@ -68,7 +68,7 @@ def constructionGRASP(taillePop, nbRunInit, cardO, cardS, kappa, sigma):
     popFinale = []
     while cpt < taillePop:
         # On génère des solutions GRASP à partir du potentiel mesuré dans la population initiale.
-        newSol = genere1solutionGRASP(comptage.copy(), taillePop, cardO, cardS, kappa, sigma).copy()
+        newSol = genere1solutionGRASP(comptage.copy(), taillePop, cardO, cardS, kappa, sigma, rho, fac).copy()
         if newSol[3]:
             cpt += 1
             popFinale.append(newSol.copy())

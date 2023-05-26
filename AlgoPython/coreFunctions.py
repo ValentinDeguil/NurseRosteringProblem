@@ -12,36 +12,69 @@ def creerAffectations(size):
 
 
 # Fonction principale permettant de résoudre de manière optimale les problèmes d'opérateurs mal affectés
-def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
+def resoudreSemaineHongrois(semaine, cardO, kappa, sigma, rho, fac):
     # On crée ici la matrice des coûts de chaque association opérateur/position dans le roulement.
     # Le coût vaut 10000 si la personne est incompétente ou si son poste actuel n'est pas sur le même créneau horaire.
     # Le coût vaut 0 s'il s'agit du poste prévu pour l'opérateur dans le roulement.
     # Le coût vaut 1 s'il s'agit d'un poste dont l'opérateur possède la compétence, situé sur le même créneau horaire
     # et différent de son poste prévu par le roulement.
+    #print("resoudre semaine hongrois", semaine)
+    poids1 = 1
+    poids2 = 10
+    poids3 = 100
+    poids4 = 1000
     matrice = []
     for i in range(cardO):
         ligneI = []
         posteI = semaine[i]
-        if kappa[i][posteI] == 0:
-            for p in range(cardO):
-                if kappa[i][p] == 0 or sigma[posteI][p] == 0:
-                    ligneI.append(10000)
+        for p in range(cardO):
+            poids = 0
+            #print("début poids = 0")
+            if p == posteI:
+                #print("même poste")
+                if kappa[i][p] == 1:
+                    poids = 0
                 else:
-                    ligneI.append(0)
-        else:
-            for p in range(cardO):
-                if kappa[i][p] == 0 or sigma[posteI][p] == 0:
-                    ligneI.append(10000)
-                elif p == posteI:
-                    ligneI.append(0)
+                    if p in fac:
+                        poids = poids3
+                    else:
+                        poids = 100000
+            else:
+                #print("poste diff")
+                if p in fac:
+                    if kappa[i][p] == 0:
+                        poids = poids3
+                    else:
+                        if kappa[i][posteI] == 1:
+                            poids += poids1
+                        # Si un opérateur affecté à un poste non rouleur devient rouleur, alors il est insatisfait
+                        if rho[p] == 0 and rho[posteI] == 1:
+                            poids += poids2
+                        # Si l'horaire d'un opérateur est modifié, alors il est insatisfait
+                        if sigma[posteI][p] == 0:
+                            poids += poids4
                 else:
-                    ligneI.append(1)
+                    if kappa[i][p] == 0:
+                        #print("pas compétent pour le nouveau poste")
+                        poids += 100000
+                    else:
+                        #print("compétent pour le nouveau poste")
+                        if kappa[i][posteI] == 1:
+                            poids += poids1
+                        # Si un opérateur affecté à un poste non rouleur devient rouleur, alors il est insatisfait
+                        if rho[p] == 0 and rho[posteI] == 1:
+                            poids += poids2
+                        # Si l'horaire d'un opérateur est modifié, alors il est insatisfait
+                        if sigma[posteI][p] == 0:
+                            poids += poids4
+            #print("poids",i,p,poids)
+            ligneI.append(poids)
 
         matrice.append(ligneI)
-    #print("matrice")
-    #for i in range(24):
+    #print("MATRICE")
+    #for i in range(cardO):
     #    ligne = str(i) + " : "
-    #    for i2 in range(24):
+    #    for i2 in range(36):
     #        ligne += str(matrice[i][i2])
     #        ligne += " "
     #    print(ligne)
@@ -55,7 +88,7 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
     # Si le poids retourné par l'algorithme hongrois est supérieur à 10000, alors on est dans le cas où il n'est
     # pas possible de trouver une solution au problème sans changer le créneau horaire d'un opérateur ou dans le
     # cas où un poste ne peut être pris en charge par personne.
-    if insat < 10000:
+    if insat < 99999:
         newSemaine = []
         for i in range(cardO):
             newSemaine.append(col_ind[i])
@@ -63,7 +96,7 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
         return newSemaine, True
     else:
         # Le booléen représente la faisabilité de la solution
-        #print(":/")
+        print(":/")
         #newSemaine = []
         #for i in range(cardO):
         #    newSemaine.append(col_ind[i])
@@ -74,21 +107,44 @@ def resoudreSemaineHongrois(semaine, cardO, kappa, sigma):
 
 # Fonction secondaire permettant de calculer l'insatisfaction de chaque opérateur à la partir de la
 # semaine initiale prévue et de sa version réparée (lorsque des opérateurs étaient incompétents)
-def calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa):
+def calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa, rho, fac, sigma):
+    #print("SEMAINE INIT", semaineInit)
+    #print("SEMAINE FINA", semaineFinale)
     scores = np.zeros(cardO)
+    poids1 = 1
+    poids2 = 10
+    poids3 = 100
+    poids4 = 1000
     for i in range(0,cardO):
+        poids = 0
         postePrevu = semaineInit[i]
         posteFinal = semaineFinale[i]
-        # un opérateur est insatisfait si son poste final est différent de son poste final
-        # alors qu'il était compétent pour le premier
-        if kappa[i][postePrevu] == 1 and postePrevu != posteFinal:
-            scores[i] = scores[i] + 1
+        if postePrevu == posteFinal:
+            if kappa[i][postePrevu] == 0:
+                poids = 100000
+            else:
+                poids = 0
+        else:
+            if kappa[i][posteFinal] == 0:
+                poids = poids3
+            else:
+                # Si le poste de l'opérateur est modifié alors qu'il possédait la compétence, alors il est insatisfait
+                if kappa[i][postePrevu] == 1:
+                    poids += poids1
+                # Si un opérateur affecté à un poste non rouleur devient rouleur, alors il est insatisfait
+                if rho[posteFinal] == 0 and rho[postePrevu] == 1:
+                    poids += poids2
+                # Si l'horaire d'un opérateur est modifié, alors il est insatisfait
+                if sigma[postePrevu][posteFinal] == 0:
+                    poids += poids4
+
+        scores[i] = poids
     return scores
 
 
 # Fonction principale retournant une trame de base pour le planning durant cardS semaines.
 # Elle prend en compte les compétences de chaque opérateur
-def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
+def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement, rho, fac):
     # isRandom est utile pour la recherche locale, on peut ainsi choisir un vecteur Y_ir aléatoire ou non
     if isRandom:
         affectations = creerAffectations(cardO)
@@ -110,11 +166,11 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     for s in range(0, cardS):
         semaineInit = trameInit[s].copy()
         #print("semaine", s)
-        semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma)
+        semaineFinale, faisable = resoudreSemaineHongrois(semaineInit.copy(), cardO, kappa, sigma, rho, fac)
         if not faisable:
             return [None, None, None, False, None]
         trameFinale.append(semaineFinale)
-        insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa)
+        insatSemaine = calculObjectif2Semaine(semaineInit, semaineFinale, cardO, kappa, rho, fac, sigma)
         #print("avant :", semaineInit)
         #print("apres :", semaineFinale)
         #print("insatSemaine",s , "=", insatSemaine)
@@ -131,7 +187,7 @@ def construireSol(cardO, cardS, kappa, sigma, isRandom, affectationsRoulement):
     return [valueObjectif2, affectations, trameFinale, True, valueObjectif1]
 
 # Fonction principale permettant de construire une population de solutions, ne conservant que les meilleures
-def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sigma):
+def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sigma, rho, fac):
 
     # Variables permettant de conserver les solutions actuellement dans la population
     # ainsi que les valeurs de la meilleure et de la pire
@@ -141,7 +197,7 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
 
     i = 0 # on continue de générer des solutions jusqu'à en avoir le nombre minimum requis
     while i < taillePop:
-        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
+        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None, rho, fac)
         # si la solution générée est faisable (par rapport aux compétences des opérateurs),
         # on met à jour les différentes informations
         if sol[3]:
@@ -165,7 +221,7 @@ def construirePopulationSolution(taillePop, nbRun, cardO, nbSemaines, kappa, sig
     #return topSolutions[:taillePop]
 
     for i in range(0,nbRun-taillePop):
-        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None)
+        sol = construireSol(cardO, nbSemaines, kappa, sigma, True, None, rho, fac)
         valueSol = sol[0]
         if sol[3]: # si la nouvelle solution est faisable...
             if valueSol < worstInsat: # et meilleure que la pire solution de la solution...
