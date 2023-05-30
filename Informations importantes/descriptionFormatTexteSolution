@@ -1,0 +1,61 @@
+#Ce fichier décrit comment une solution doit être représentée au format texte afin de pouvoir la vérifier à l'aide du fichier verifSol.py
+
+#Taille du problème
+Ligne 0 : cardO
+Ligne 1 : cardP
+Ligne 2 : cardR
+Ligne 3 : cardS
+
+#Données du problème
+Ligne 4 : rho au format "11111011110..." (ligne de longueur cardP) 1 le poste est non rouleur, 0 sinon
+Ligne 5 : fac au format "11111011110..." (ligne de longueur cardP) 1 le poste est facultatif, 0 sinon
+
+Ligne 6 : o[j] au format "11111011110..." (ligne de longueur cardJ) 1 le jour est ouvré, 0 sinon
+
+cardO lignes suivantes (lignes de longueur cardP) : kappa[i][p] au format "11111011110..." 1 si l'opérateur i possède la compétence pour le poste p, 0 sinon
+exemple :
+11010 <- l'opérateur 0 possède les compétences pour les postes 0, 1 et 3
+11000 <- l'opérateur 1 possède les compétences pour les postes 0 et 1
+etc...
+
+cardP lignes suivantes (lignes de longueur cardP) : sigma[p][p'] au format "11111011110..." 1 si le poste p est permutable avec le poste p', 0 sinon
+exemple :
+10111 <- le poste 0 est permutable avec les postes 0, 2, 3 et 4
+01101 <- le poste 1 est permutable avec les postes 1, 2 et 4
+etc...
+
+cardO lignes suivantes (lignes de longueur cardJ) : delta[i][j] au format "11111011110..." 1 si l'opérateur i travaille le jour j, 0 sinon
+exemple :
+11011 <- l'opérateur 0 travaille les jours 0, 1, 3 et 4
+11111 <- l'opérateur 1 travaille les jours 0, 1, 2, 3 et 4
+etc...
+
+4 lignes suivantes : poids1, poids2, poids3 et poids4, représente les 4 poids associés aux différentes actions possibles pour résoudre les problèmes de planning. Il est utile de les fournir car verifSol.py vérifie que la fonction objectif a bien été calculée.
+
+#Solution à tester
+cardO * cardJ lignes suivantes (lignes de longueur cardP) : x[i][j][p] au format "11111011110..." 1 si l'opérateur i travaille le jour j au poste p, 0 sinon
+exemple:
+00010 <- l'opérateur 0 est affecté au poste 3 le jour 0
+00010 <- l'opérateur 0 est affecté au poste 3 le jour 1
+etc.. le planning de l'opérateur 0 est représenté sur cardJ lignes
+01000 <- l'opérateur 1 est affecté au poste 1 le jour 0
+00100 <- l'opérateur 1 est affecté au poste 2 le jour 1
+etc.. le planning de l'opérateur 1 est représenté sur cardJ lignes
+etc... et ainsi de suite pour chaque opérateur
+
+cardO lignes suivantes (lignes de longueur cardR) : y[i][r] au format "11111011110..." 1 si l'opérateur i est affecté au rang r dans le roulement, 0 sinon
+exemple :
+01000 <- l'opérateur 0 est associé au rang 1 du roulement
+00100 <- l'opérateur 1 est associé au rang 2 du roulement
+etc...
+
+cardO * cardS lignes suivantes (lignes de longueur cardP) : z[i][s][p] au format "11111011110..." 1 si l'opérateur i est affecté au poste p la semaine s, 0 sinon
+exemple:
+01000 <- l'opérateur 0 est affecté au poste 1 la semaine 0
+00100 <- l'opérateur 0 est affecté au poste 2 la semaine 1
+etc.. le planning de l'opérateur 0 est représenté sur cardS lignes
+00010 <- l'opérateur 1 est affecté au poste 3 la semaine 0
+00001 <- l'opérateur 1 est affecté au poste 4 la semaine 2
+etc.. le planning de l'opérateur est représenté sur cardS lignes
+etc... et ainsi de suite pour chaque opérateur
+
