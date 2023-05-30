@@ -161,7 +161,7 @@ def main2():
     cardS = 36
     cardO = 36
 
-    taillePop = 5000
+    taillePop = 1000
     nbEssais = 10000  # nombre de solutions générées, on ne garde que les taillePop meilleures
     start = time.time()
     #pop = methode2opt.rechercheLocale2optPopulation(taillePop, nbEssais, 36, cardS, kappa, sigma, rho, fac)
@@ -182,10 +182,10 @@ def main2():
         for p in range(36):
             affectSemaine[p] = (affectSemaine[p] + s) % 36
         trameInit.append(affectSemaine.copy())
-    #for sem in range(cardS):
-    #    print("semaine", sem)
-    #    score = coreFunctions.calculObjectif2Semaine(trameInit[sem], tr[sem], cardS, kappa, rho, fac, sigma)
-    #    print(score)
+    for sem in range(cardS):
+        print("semaine", sem)
+        score = coreFunctions.calculObjectif2Semaine(trameInit[sem], tr[sem], cardS, kappa, rho, fac, sigma)
+        print(score)
 
 
     #print("test fixé")
