@@ -1,4 +1,5 @@
 import random
+import numpy as np
 def generate(size):
     # Données à générer pour l'instance
     vecteurChance = []  # Probabilité qu'un opérateur soit capable d'effectuer chaque type de poste
@@ -7,24 +8,24 @@ def generate(size):
     rho = []            # Poste roulant ou non (1 = non roulant, 0 = roulant)
     d = []              # RA de chaque opérateur la première semaine (-1 = 100%)
     if size == 12:
-        vecteurChance = [18 / 24, 21 / 24, 21 / 24, 21 / 24, 20 / 24, 18 / 24]  # Auto, Dech, Lav, Cond, Lav/Cond, Sté
-        listePostes = [0,4,1,-1,2,3,2,-1,3,5,3,-1]
-        creneaux = [0,1,1,0,2,1,1,0,1,3,1,0] #j'aurais voulu mettre ça, mais les créneaux 2 et 3 sont uniques → impossibles à remplacer quand incompétence
-        creneaux = [0,1,1,0,2,1,1,0,1,2,1,0]
-        rho = [1,1,1,0,1,1,1,0,1,1,1,0]
-        d = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+        vecteurChance = [16/23, 19/23, 22/23, 23/23, 16/23]  # Auto, Dech, Lav, Cond, Sté
+        listePostes = [0,-1,2,3,0,-1,4,3,2,-1,1,4] # 0 = Auto, 1 = Dech, etc... -1 = rouleur
+        creneaux = [1,0,2,1,3,0,1,2,1,0,3,2]
+        rho = [1,0,1,1,1,0,1,1,1,0,1,1]
+        d = [-1,-1,0,-1,-1,2,-1,4,-1,1,-1,-1]
     elif size == 25:
         # attention, il y a 25 postes process, mais les statistiques ont été mesurées sur les 23 opérateurs process
         vecteurChance = [16/23, 19/23, 22/23, 23/23, 22/23, 16/23] # Auto, Dech, Lav, Cond, Lav/Cond, Sté
         listePostes = [1,0,4,3,-1,1,3,1,-1,2,3,5,-1,2,0,3,-1,3,2,-1,-1,5,5,2,-1] # 0 = Auto, 1 = Dech, etc... -1 = rouleur
         creneaux = [3,1,1,2,0,2,3,1,0,2,1,2,0,1,3,1,0,2,1,0,0,3,1,2,0]
         rho = [1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,0,1,1,1,0]
-        d = [3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+        d = [-1,-1,2,0,-1,-1,-1,0,-1,-1,4,-1,-1,-1,2,1,-1,-1,-1,-1,1,-1,3,-1,-1]
     elif size == 36:
         vecteurChance = [21/size, 23/size, 26/size, 31/size, 26/size, 21/size, 13/size]  # Auto, Dech, Lav, Cond, Lav/Cond, Sté, Rec
         listePostes = [1,0,6,4,-1,3,-1,6,6,1,3,6,1,-1,2,3,5,-1,2,-1,0,6,3,-1,6,3,2,-1,-1,6,5,-1,5,2,-1,6]
-        creneaux = [5,1,4,1,0,4,0,4,3,4,5,4,1,0,4,1,4,0,1,0,5,4,1,0,3,4,1,0,1,4,5,0,1,4,0,2]
+        creneaux = [5,1,4,1,0,4,0,4,3,4,5,4,1,0,4,1,4,0,1,0,5,4,1,0,3,4,1,0,0,4,5,0,1,4,0,2]
         rho = [1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,0,1,1,0,1,1,0,1]
+        d = [-1,-1,-1,-1,0,-1,-1,0,-1,4,-1,2,-1,0,-1,4,-1,-1,1,-1,-1,-1,-1,2,-1,-1,-1,-1,3,-1,-1,1,-1,-1,3,-1]
     else:
         print("Taille d'instance non valide")
         return None
@@ -34,7 +35,7 @@ def generate(size):
     for i in range(-5,6):
         newVecteurChance = []
         for v in range(len(vecteurChance)):
-            newVecteurChance.append(vecteurChance[v]*(1+0.1*i))
+            newVecteurChance.append(vecteurChance[v]*(1+0.05*i))
         #print(newVecteurChance)
 
         # On génère les compétences de chaque opérateur
@@ -86,16 +87,55 @@ def generate(size):
                 ligneSigma.append(0)
         sigma.append(ligneSigma)
 
+    delta = np.full((size, size*7), 1)
+    for i in range(size):
+        if d[i] != -1:
+            d_i = d[i]
+            for s in range(size):
+                d_is = (d_i+s)%5
+                j_s = 7 * s + d_is  # numéro du jour non travaillé
+                delta[i][j_s] = 0
+
     #print("sigma")
     #for i in range(size):
     #    print(sigma[i])
-
     ##affichage de controle
     #print("Contrôle setKappa")
     #for i in range(len(setKappa)):
-    #    print(setKappa[i][0])
+    #    print("kappa")
+    #    for i2 in range(size):
+    #        print(setKappa[i][i2])
+    #print("Instances générées")
+    #return [setKappa, sigma, rho, d]
+    for index in range(10):
+        nomInstance = str(size) + "_" + str(index)
+        path = "Instances" + "/" + nomInstance
+        with open(path, "w") as file_object:
+            file_object.write(str(size) + "\n")
 
-    print("Instances générées")
-    return [setKappa, sigma, rho, d]
+            ligneRho = ""
+            for p in range(size):
+                ligneRho += str(rho[p])
+            file_object.write(ligneRho + "\n")
 
-#generate(25)
+            for i in range(size):
+                ligneDeltaI = ""
+                for j in range(size*7):
+                    ligneDeltaI += str(delta[i][j])
+                file_object.write(ligneDeltaI + "\n")
+
+            for i in range(size):
+                ligneKappaI = ""
+                for p in range(size):
+                    ligneKappaI += str(setKappa[index][i][p])
+                file_object.write(ligneKappaI + "\n")
+
+            for p1 in range(size):
+                ligneSigmaP = ""
+                for p2 in range(size):
+                    ligneSigmaP += str(sigma[p1][p2])
+                file_object.write(ligneSigmaP + "\n")
+
+generate(12)
+generate(25)
+generate(36)
