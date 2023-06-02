@@ -13,6 +13,7 @@ def generate(size):
         creneaux = [1,0,2,1,3,0,1,2,1,0,3,2]
         rho = [1,0,1,1,1,0,1,1,1,0,1,1]
         d = [-1,-1,0,-1,-1,2,-1,4,-1,1,-1,-1]
+        fac = [7]
     elif size == 25:
         # attention, il y a 25 postes process, mais les statistiques ont été mesurées sur les 23 opérateurs process
         vecteurChance = [16/23, 19/23, 22/23, 23/23, 22/23, 16/23] # Auto, Dech, Lav, Cond, Lav/Cond, Sté
@@ -20,12 +21,14 @@ def generate(size):
         creneaux = [3,1,1,2,0,2,3,1,0,2,1,2,0,1,3,1,0,2,1,0,0,3,1,2,0]
         rho = [1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,0,1,1,1,0]
         d = [-1,-1,2,0,-1,-1,-1,0,-1,-1,4,-1,-1,-1,2,1,-1,-1,-1,-1,1,-1,3,-1,-1]
+        fac = [3,10]
     elif size == 36:
         vecteurChance = [21/size, 23/size, 26/size, 31/size, 26/size, 21/size, 13/size]  # Auto, Dech, Lav, Cond, Lav/Cond, Sté, Rec
         listePostes = [1,0,6,4,-1,3,-1,6,6,1,3,6,1,-1,2,3,5,-1,2,-1,0,6,3,-1,6,3,2,-1,-1,6,5,-1,5,2,-1,6]
         creneaux = [5,1,4,1,0,4,0,4,3,4,5,4,1,0,4,1,4,0,1,0,5,4,1,0,3,4,1,0,0,4,5,0,1,4,0,2]
         rho = [1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,0,1,1,0,1,1,0,1]
         d = [-1,-1,-1,-1,0,-1,-1,0,-1,4,-1,2,-1,0,-1,4,-1,-1,1,-1,-1,-1,-1,2,-1,-1,-1,-1,3,-1,-1,1,-1,-1,3,-1]
+        fac = [22,25,2]
     else:
         print("Taille d'instance non valide")
         return None
@@ -123,6 +126,14 @@ def generate(size):
                 for j in range(size*7):
                     ligneDeltaI += str(delta[i][j])
                 file_object.write(ligneDeltaI + "\n")
+
+            ligneFac = ""
+            for p in range(size):
+                if p in fac:
+                    ligneFac += "1"
+                else:
+                    ligneFac += "0"
+            file_object.write(ligneFac + "\n")
 
             for i in range(size):
                 ligneKappaI = ""
