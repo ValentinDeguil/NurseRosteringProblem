@@ -121,11 +121,14 @@ def generate(size):
                 ligneRho += str(rho[p])
             file_object.write(ligneRho + "\n")
 
+            #for i in range(size):
+            #    ligneDeltaI = ""
+            #    for j in range(size*7):
+            #        ligneDeltaI += str(delta[i][j])
+            #    file_object.write(ligneDeltaI + "\n")
+
             for i in range(size):
-                ligneDeltaI = ""
-                for j in range(size*7):
-                    ligneDeltaI += str(delta[i][j])
-                file_object.write(ligneDeltaI + "\n")
+                file_object.write(str(d[i]) + "\n")
 
             ligneFac = ""
             for p in range(size):
