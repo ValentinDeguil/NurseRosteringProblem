@@ -88,12 +88,12 @@ def main():
 
     for sem in range(24):
         print("semaine", sem)
-        score = coreFunctions.calculObjectif2Semaine(trameInit[sem], tr[sem], 24, kappa, rho, fac, sigma)
+        score = coreFunctions.calculObjectifSemaine(trameInit[sem], tr[sem], 24, kappa, rho, fac, sigma)
         print(score)
     #[valueObjectif2, affectations, trameFinale, True, valueObjectif1]
 
     sol = pop[0] # y (affectations rang) et z (affectations aux postes par semaine)
-    affect = coreFunctions.getAffectationsJour(sol, kappa, sigma, rho, d) # x (affectations aux postes par jour)
+    affect = coreFunctions.getAffectationsJour(sol, kappa, rho, d) # x (affectations aux postes par jour)
     if affect[0]:
         print("Solution exportée au format CSV")
         convertSolution.convertSolutionCSV(sol, affect[1], d, nomsPostes, nomsOperateurs)
@@ -157,6 +157,7 @@ def main2():
         print(sigma[i])
 
     rho = [1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,0,1,1,0,1,1,0,1]
+    d = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     fac = [22,15,2]
     cardS = 36
     cardO = 36
@@ -165,7 +166,7 @@ def main2():
     nbEssais = 10000  # nombre de solutions générées, on ne garde que les taillePop meilleures
     start = time.time()
     #pop = methode2opt.rechercheLocale2optPopulation(taillePop, nbEssais, 36, cardS, kappa, sigma, rho, fac)
-    pop = methodeGRASP.constructionGRASP(taillePop,100,cardO,cardS,kappa,sigma,rho,fac)
+    pop = methodeGRASP.constructionGRASP(taillePop,100,cardO,cardS,kappa,sigma,rho,fac, d)
     end = time.time()
     print("                                     ")  # pour effacer le chargement
     print("Population générée :")
@@ -184,7 +185,7 @@ def main2():
         trameInit.append(affectSemaine.copy())
     for sem in range(cardS):
         print("semaine", sem)
-        score = coreFunctions.calculObjectif2Semaine(trameInit[sem], tr[sem], cardS, kappa, rho, fac, sigma)
+        score = coreFunctions.calculObjectifSemaine(trameInit[sem], tr[sem], cardS, kappa, rho, fac, sigma)
         print(score)
 
 
@@ -203,5 +204,6 @@ def main2():
     #    score = coreFunctions.calculObjectif2Semaine(trameInit[sem], solfixe[2][sem], 36, kappa, rho, fac, sigma)
     #    print(score)
     #print(trameInit)
+    convertSolution.convertSolutionText(sol, coreFunctions.getAffectationsJour(sol, kappa, rho, d), kappa, sigma, rho, d, fac, [1,10,100,1000])
 
 main2()

@@ -59,14 +59,15 @@ def convertSolutionCSV(solution, affectationsJours, d, nomsPostes, nomsOperateur
 
             writer.writerow(planningPerso)
 
+
 # calcul du jour non travaillé pour une semaine donnée d'un opérateur à 80%
 # en fonction du jour non travaillé la première semaine
 def delta_i(s,d_i):
     return (d_i+s) % 5
 
 
-def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d):
-    #[valueObjectif2, affectations, trameFinale, True, valueObjectif1]
+def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d, fac, tabPoids):
+    # [valueObjectif, affectations, trameFinale, True]
     affectations = solution[1]
     trameFinale  = solution[2]
 
@@ -82,11 +83,20 @@ def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d
         file_object.write(str(cardP) + "\n") #cardP
         file_object.write(str(cardR) + "\n") #cardR
         file_object.write(str(cardS) + "\n") #cardS
-
+        print(cardO, cardP, cardR, cardS)
         ligne = ""
         for p in range(cardP):
             ligne = ligne + str(rho[p])
         file_object.write(ligne + "\n")  # rho
+
+        ligne = ""
+        for p in range(cardP):
+            if p in fac:
+                ligne += "1"
+            else:
+                ligne += "0"
+        file_object.write(ligne + "\n")  # fac
+
 
         o = np.zeros(cardJ)
         for j in range(cardJ):
@@ -123,6 +133,11 @@ def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d
                 ligne += str(delta[i][j])
             file_object.write(ligne + "\n")  # delta_ij
 
+        file_object.write(str(tabPoids[0]) + "\n")
+        file_object.write(str(tabPoids[1]) + "\n")
+        file_object.write(str(tabPoids[2]) + "\n")
+        file_object.write(str(tabPoids[3]) + "\n")
+
         x = []
         affect = []
         for p in range(cardP):
@@ -131,7 +146,7 @@ def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d
             ligne = []
             for j in range(cardJ):
                 ligne.append(affect.copy())
-            x.append(ligne)
+            x.append(ligne.copy())
 
         for s in range(cardS):
             affectSemaine = solution[2][s]
@@ -144,18 +159,22 @@ def convertSolutionText(solution, affectationsJournalieres, kappa, sigma, rho, d
             RA = d[i]
             if RA != -1:
                 for s in range(cardS):
-                    j = delta_i(s, RA) + s * 7
+                    #j = delta_i(s, RA) + s * 7
+                    j = (RA + s)%5 + 7*s
                     for p in range(cardP):
                         x[i][j][p] = 0
 
         for c in range(len(affectationsJournalieres[1])):
-            changement = affectationsJournalieres[1][c]
+            changement = affectationsJournalieres[1][c].copy()
             j = changement[0]
             i = changement[1]
             newP = changement[2]
+            #print("avant", x[i][j])
             for p in range(cardP):
                 x[i][j][p] = 0
             x[i][j][newP] = 1
+            #print("apres", x[i][j])
+            #print("on passe à 1 x",i,j,newP)
 
 
         for i in range(0, cardO):
